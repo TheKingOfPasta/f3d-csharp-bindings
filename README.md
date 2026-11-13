@@ -5,10 +5,10 @@ Minimal C# bindings for F3D, using libf3d's C API. Laid out like F3D's Java bind
 
 ## Files
 
-- `Engine.cs`, `Options.cs`, `Scene.cs`, `Interactor.cs`: one class per F3D class, each with its own `[LibraryImport]` calls
-- `F3DException.cs`: base class for F3D errors
+- `src/`: the library (`F3D.csproj`, builds `F3D.dll`)
+  - `Engine.cs`, `Options.cs`, `Scene.cs`, `Interactor.cs`: one class per F3D class, each with its own `[LibraryImport]` calls
+  - `F3DException.cs`: base class for F3D errors
 - `F3D.sln`: builds the library, the tests and the viewer
-- `F3D.csproj`: the library (`F3D.dll`)
 - `CMakeLists.txt`: finds F3D and builds `F3D.sln`
 - `testing/`: one `Test<Class>.cs` per class, run through ctest
 - `examples/Viewer/`: opens a 3D file in an F3D window

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../F3D.csproj" />
+    <ProjectReference Include="../src/F3D.csproj" />
   </ItemGroup>
 
 </Project>
