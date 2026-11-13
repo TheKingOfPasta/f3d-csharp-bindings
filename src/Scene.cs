@@ -7,7 +7,13 @@ public sealed unsafe class Scene
 {
     readonly f3d_scene_t* _handle;
 
-    internal Scene(f3d_scene_t* handle) => _handle = handle;
+    public Animation Animation { get; }
+
+    internal Scene(f3d_scene_t* handle)
+    {
+        _handle = handle;
+        Animation = new Animation(NativeMethods.f3d_scene_get_animation(handle));
+    }
 
     public Scene Add(string filePath)
     {
