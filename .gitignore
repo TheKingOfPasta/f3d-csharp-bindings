@@ -1,0 +1,14 @@
+# CMake build folders
+build/
+native/build/
+native/lib/
+
+# dotnet build output
+bin/
+obj/
+
+# IDEs
+.vs/
+.vscode/
+.idea/
+*.user
