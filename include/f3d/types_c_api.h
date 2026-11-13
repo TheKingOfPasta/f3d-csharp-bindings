@@ -1,0 +1,337 @@
+#ifndef F3D_TYPES_C_API_H
+#define F3D_TYPES_C_API_H
+
+#include "export.h"
+
+#include <stddef.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+  /**
+   * @brief Describe a 3D point.
+   */
+  typedef double f3d_point3_t[3];
+
+  /**
+   * @brief Describe a 3D vector.
+   */
+  typedef double f3d_vector3_t[3];
+
+  /**
+   * @brief Describe an angle in degrees.
+   */
+  typedef double f3d_angle_deg_t;
+
+  /**
+   * @brief Describe a ratio.
+   */
+  typedef struct f3d_ratio_t
+  {
+    double value;
+  } f3d_ratio_t;
+
+  /**
+   * @brief Describe a RGB color.
+   */
+  typedef struct f3d_color_t
+  {
+    double data[3];
+  } f3d_color_t;
+
+  /**
+   * @brief Get the red component of a color.
+   */
+  F3D_EXPORT double f3d_color_r(const f3d_color_t* color);
+
+  /**
+   * @brief Get the green component of a color.
+   */
+  F3D_EXPORT double f3d_color_g(const f3d_color_t* color);
+
+  /**
+   * @brief Get the blue component of a color.
+   */
+  F3D_EXPORT double f3d_color_b(const f3d_color_t* color);
+
+  /**
+   * @brief Set color components.
+   */
+  F3D_EXPORT void f3d_color_set(f3d_color_t* color, double r, double g, double b);
+
+  /**
+   * @brief Describe a 3D direction.
+   */
+  typedef struct f3d_direction_t
+  {
+    double data[3];
+  } f3d_direction_t;
+
+  /**
+   * @brief Get the x component of a direction.
+   */
+  F3D_EXPORT double f3d_direction_x(const f3d_direction_t* dir);
+
+  /**
+   * @brief Get the y component of a direction.
+   */
+  F3D_EXPORT double f3d_direction_y(const f3d_direction_t* dir);
+
+  /**
+   * @brief Get the z component of a direction.
+   */
+  F3D_EXPORT double f3d_direction_z(const f3d_direction_t* dir);
+
+  /**
+   * @brief Set direction components.
+   */
+  F3D_EXPORT void f3d_direction_set(f3d_direction_t* dir, double x, double y, double z);
+
+  /**
+   * @brief Store a 3x3 transform matrix as a sequence of 9 double values.
+   */
+  typedef struct f3d_transform2d_t
+  {
+    double data[9];
+  } f3d_transform2d_t;
+
+  /**
+   * @brief Create a 2D transform from scale, translate and angle.
+   *
+   * @param transform Transform structure to fill.
+   * @param scale_x Scale factor in x.
+   * @param scale_y Scale factor in y.
+   * @param translate_x Translation in x.
+   * @param translate_y Translation in y.
+   * @param angle_deg Rotation angle in degrees.
+   */
+  F3D_EXPORT void f3d_transform2d_create(f3d_transform2d_t* transform, double scale_x,
+    double scale_y, double translate_x, double translate_y, f3d_angle_deg_t angle_deg);
+
+  /**
+   * @brief Describe a colormap.
+   */
+  typedef struct f3d_colormap_t
+  {
+    double* data;
+    size_t count;
+  } f3d_colormap_t;
+
+  /**
+   * @brief Free a colormap structure.
+   *
+   * @param colormap Colormap to free.
+   */
+  F3D_EXPORT void f3d_colormap_destroy(f3d_colormap_t* colormap);
+
+  /**
+   * @brief Describe a 3D surfacic mesh.
+   */
+  typedef struct f3d_mesh_t
+  {
+    float* points;
+    size_t points_count;
+
+    float* normals;
+    size_t normals_count;
+
+    float* texture_coordinates;
+    size_t texture_coordinates_count;
+
+    unsigned int* face_sides;
+    size_t face_sides_count;
+
+    unsigned int* face_indices;
+    size_t face_indices_count;
+  } f3d_mesh_t;
+
+  /**
+   * @brief Check validity of a mesh.
+   *
+   * The returned error message string is heap-allocated and must be freed with
+   * f3d_utils_string_destroy().
+   *
+   * @param mesh Mesh to validate.
+   * @param error_message Pointer to receive error message if invalid.
+   * @return 1 if valid, 0 if invalid.
+   */
+  F3D_EXPORT int f3d_mesh_is_valid(const f3d_mesh_t* mesh, char** error_message);
+
+  /**
+   * @brief Scalar data types supported by a zero-copy mesh view.
+   *
+   * Values mirror f3d::mesh_view::data_type and MUST stay in the same order.
+   */
+  typedef enum f3d_mesh_data_type_t
+  {
+    F3D_MESH_DATA_U8 = 0,
+    F3D_MESH_DATA_I8,
+    F3D_MESH_DATA_U16,
+    F3D_MESH_DATA_I16,
+    F3D_MESH_DATA_U32,
+    F3D_MESH_DATA_I32,
+    F3D_MESH_DATA_U64,
+    F3D_MESH_DATA_I64,
+    F3D_MESH_DATA_F32,
+    F3D_MESH_DATA_F64
+  } f3d_mesh_data_type_t;
+
+  /**
+   * @brief Zero-copy view of an existing data array (mirrors f3d::mesh_view::data_array_t).
+   *
+   * `data` is NOT copied: it must stay valid and allocated for as long as the mesh view
+   * stays in the scene. `name` may be NULL. `components` and `stride` default to 1 when
+   * left at 0. `stride` is counted in elements (not bytes). Set `time_dependent` to 0 for
+   * arrays whose contents never change to help performance.
+   */
+  typedef struct f3d_data_array_t
+  {
+    const char* name;
+    f3d_mesh_data_type_t type;
+    const void* data;
+    size_t components;
+    size_t stride;
+    int time_dependent;
+  } f3d_data_array_t;
+
+  /**
+   * @brief Zero-copy view of a cell array (mirrors f3d::mesh_view::cell_array_t).
+   *
+   * `offset_count` must equal the number of cells + 1 (1 means no cell). The last offset
+   * value must equal `index_count`. `offsets`/`indices` must use an integer type
+   * (I32/U32/I64/U64) and share the same type.
+   */
+  typedef struct f3d_cell_array_t
+  {
+    size_t offset_count;
+    f3d_data_array_t offsets;
+    size_t index_count;
+    f3d_data_array_t indices;
+  } f3d_cell_array_t;
+
+  /**
+   * @brief Zero-copy view of a mesh in memory (mirrors f3d::mesh_view::memory_view_t).
+   *
+   * Every pointer referenced here must stay valid while the mesh view is in the scene.
+   * `points` must have 3 components and type F32 or F64. `normals` (3 comps) and
+   * `texture_coordinates` (2 comps) are optional (leave `.data` NULL to skip). The
+   * `*_scalars` arrays may be NULL when their count is 0.
+   */
+  typedef struct f3d_memory_view_t
+  {
+    size_t point_count;
+    f3d_data_array_t points;
+    f3d_data_array_t normals;
+    f3d_data_array_t texture_coordinates;
+
+    f3d_cell_array_t vertices;
+    f3d_cell_array_t lines;
+    f3d_cell_array_t polygons;
+
+    const f3d_data_array_t* point_scalars;
+    size_t point_scalars_count;
+    const f3d_data_array_t* cell_scalars;
+    size_t cell_scalars_count;
+  } f3d_memory_view_t;
+
+  /**
+   * @brief Structure describing a mesh view in the scene.
+   *
+   * This structure holds the time range, name, and a callback function to retrieve the memory view
+   * at a specific time. time_min and time_max define the valid time range for the mesh view. If
+   * equal, the mesh view is considered static. `name` is the identifier for the mesh view and can
+   * be NULL. `get_memory_view` is a callback function to retrieve the memory view at a specific
+   * time and must be specified. `opaque` is a user-defined pointer that will be passed to the
+   * `get_memory_view` callback.
+   * `buffers_need_update` is a callback function to check if the buffers need to be updated.
+   * If `buffers_need_update` returns non-zero, it indicates that the buffers need to be updated.
+   * `buffers_updated` is a callback function to notify that the buffers have been updated.
+   */
+  typedef struct f3d_mesh_view_t
+  {
+    double time_min;
+    double time_max;
+    const char* name;
+    const f3d_memory_view_t* (*get_memory_view)(double time, void* opaque);
+    int (*buffers_need_update)(void* opaque);
+    void (*buffers_updated)(void* opaque);
+    void* opaque;
+  } f3d_mesh_view_t;
+
+  /**
+   * @brief Enumeration of light types.
+   */
+  typedef enum f3d_light_type_t
+  {
+    F3D_LIGHT_TYPE_HEADLIGHT = 1,
+    F3D_LIGHT_TYPE_CAMERA_LIGHT = 2,
+    F3D_LIGHT_TYPE_SCENE_LIGHT = 3
+  } f3d_light_type_t;
+
+  /**
+   * @brief Structure describing the state of a light.
+   */
+  typedef struct f3d_light_state_t
+  {
+    f3d_light_type_t type;
+    f3d_point3_t position;
+    f3d_color_t color;
+    f3d_vector3_t direction;
+    int positional_light;
+    double intensity;
+    int switch_state;
+    int cast_shadows;
+  } f3d_light_state_t;
+
+  /**
+   * @brief Free a light state structure.
+   *
+   * @param light_state Light state to free.
+   */
+  F3D_EXPORT void f3d_light_state_destroy(f3d_light_state_t* light_state);
+
+  /**
+   * @brief Compare two light states for equality.
+   *
+   * @param a First light state.
+   * @param b Second light state.
+   * @return 1 if equal, 0 otherwise.
+   */
+  F3D_EXPORT int f3d_light_state_equal(const f3d_light_state_t* a, const f3d_light_state_t* b);
+
+  /**
+   * @brief Structure describing a single node of the scene hierarchy.
+   */
+  typedef struct f3d_node_state_t
+  {
+    int id;
+    int parent_id;
+    int level;
+    char* label;
+    int visible;
+    int has_children;
+    int collapsed;
+  } f3d_node_state_t;
+
+  /**
+   * @brief Structure describing the contents of the scene.
+   *
+   * number_of_files counts every file added with f3d_scene_add() as well as every mesh and buffer
+   * added with f3d_scene_add_mesh() and f3d_scene_add_buffer().
+   */
+  typedef struct f3d_scene_info_t
+  {
+    int number_of_files;
+    int number_of_actors;
+    int64_t number_of_points;
+    int64_t number_of_cells;
+  } f3d_scene_info_t;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // F3D_TYPES_C_API_H
