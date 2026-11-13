@@ -1,16 +1,13 @@
-using System.Runtime.InteropServices;
+using F3D.Native;
 
 namespace F3D;
 
-public sealed partial class Interactor
+public sealed unsafe class Interactor
 {
-    readonly nint _handle;
+    readonly f3d_interactor_t* _handle;
 
-    internal Interactor(nint handle) => _handle = handle;
+    internal Interactor(f3d_interactor_t* handle) => _handle = handle;
 
     // Opens the window. Returns when the window is closed.
-    public void Start(double deltaTime = 1.0 / 30.0) => f3d_interactor_start(_handle, deltaTime);
-
-    [LibraryImport(Engine.Lib)]
-    private static partial void f3d_interactor_start(nint interactor, double deltaTime);
+    public void Start(double deltaTime = 1.0 / 30.0) => NativeMethods.f3d_interactor_start(_handle, deltaTime);
 }

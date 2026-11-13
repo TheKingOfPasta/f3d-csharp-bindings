@@ -18,5 +18,6 @@ dotnet tool run ClangSharpPInvokeGenerator \
   --generate macro-bindings \
   --generate helper-types \
   --resource-directory "$RESOURCE_DIR" \
+  --define-macro F3D_STATIC_DEFINE \
   -x c++ \
   -I ./include/f3d

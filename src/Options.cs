@@ -1,15 +1,17 @@
-using System.Runtime.InteropServices;
+using System.Text;
+using F3D.Native;
 
 namespace F3D;
 
-public sealed partial class Options
+public sealed unsafe class Options
 {
-    readonly nint _handle;
+    readonly f3d_options_t* _handle;
 
-    internal Options(nint handle) => _handle = handle;
+    internal Options(f3d_options_t* handle) => _handle = handle;
 
-    public void SetAsBool(string name, bool value) => f3d_options_set_as_bool(_handle, name, value ? 1 : 0);
-
-    [LibraryImport(Engine.Lib, StringMarshalling = StringMarshalling.Utf8)]
-    private static partial void f3d_options_set_as_bool(nint options, string name, int value);
+    public void SetAsBool(string name, bool value)
+    {
+        fixed (byte* n = Encoding.UTF8.GetBytes(name + '\0'))
+            NativeMethods.f3d_options_set_as_bool(_handle, (sbyte*)n, value ? 1 : 0);
+    }
 }
