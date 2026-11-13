@@ -9,21 +9,13 @@ project(f3d_csharp NONE)
 
 find_package(f3d REQUIRED COMPONENTS c_api)
 find_program(DOTNET_EXECUTABLE dotnet REQUIRED)
-message(STATUS "Bindings: C#: dotnet found: ${DOTNET_EXECUTABLE}")
 
-set(F3D_CSHARP_CONFIG $<IF:$<CONFIG:Debug>,Debug,Release>)
-set(F3D_CSHARP_LIB_DIR $<TARGET_FILE_DIR:f3d::c_api>)
-set(F3D_CSHARP_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin)
-
-# Builds F3D.dll and copies the F3D libraries next to it
+# Builds F3D.sln. F3DLibDir tells F3D.csproj where to copy the F3D libraries from.
 add_custom_target(f3d-csharp ALL
-  COMMAND ${DOTNET_EXECUTABLE} build ${CMAKE_CURRENT_SOURCE_DIR}/F3D.csproj
-    --nologo -c ${F3D_CSHARP_CONFIG} -o ${F3D_CSHARP_OUTPUT_DIR}
-    -p:F3DLibDir=${F3D_CSHARP_LIB_DIR}
-  COMMENT "Building F3D C# bindings"
+  COMMAND ${DOTNET_EXECUTABLE} build ${CMAKE_CURRENT_SOURCE_DIR}/F3D.sln
+    -p:F3DLibDir=$<TARGET_FILE_DIR:f3d::c_api>
   VERBATIM)
 
-# Testing
 option(BUILD_TESTING "Build the tests" OFF)
 if(BUILD_TESTING)
   enable_testing()
