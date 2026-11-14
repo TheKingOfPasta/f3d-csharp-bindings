@@ -10,6 +10,7 @@ var tests = new Dictionary<string, Action<string[]>>
     ["TestImage"] = TestImage.Run,
     ["TestVideoPacket"] = TestVideoPacket.Run,
     ["TestUtils"] = TestUtils.Run,
+    ["TestTypes"] = TestTypes.Run,
 };
 
 if (args.Length < 1 || !tests.TryGetValue(args[0], out var test))
