@@ -771,7 +771,7 @@ namespace F3D.Native
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("f3d_context_t *")]
-        public static extern f3d_context* f3d_context_get_symbol([NativeTypeName("const char *")] sbyte* lib, [NativeTypeName("const char *")] sbyte* func);
+        public static extern f3d_context* f3d_context_get_symbol([MarshalAs(UnmanagedType.LPUTF8Str)] string lib, [MarshalAs(UnmanagedType.LPUTF8Str)] string func);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_context_destroy([NativeTypeName("f3d_context_t *")] f3d_context* ctx);
@@ -816,7 +816,7 @@ namespace F3D.Native
         public static extern void f3d_engine_destroy(f3d_engine_t* engine);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_engine_set_cache_path(f3d_engine_t* engine, [NativeTypeName("const char *")] sbyte* cache_path);
+        public static extern int f3d_engine_set_cache_path(f3d_engine_t* engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string cache_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
@@ -830,16 +830,16 @@ namespace F3D.Native
         public static extern sbyte* f3d_engine_dump_to_string(f3d_engine_t* engine);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_engine_dump_to_file(f3d_engine_t* engine, [NativeTypeName("const char *")] sbyte* file_path);
+        public static extern int f3d_engine_dump_to_file(f3d_engine_t* engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int f3d_engine_dump_to_clipboard(f3d_engine_t* engine);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_engine_load_from_string(f3d_engine_t* engine, [NativeTypeName("const char *")] sbyte* content);
+        public static extern int f3d_engine_load_from_string(f3d_engine_t* engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string content);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_engine_load_from_file(f3d_engine_t* engine, [NativeTypeName("const char *")] sbyte* file_path);
+        public static extern int f3d_engine_load_from_file(f3d_engine_t* engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int f3d_engine_load_from_clipboard(f3d_engine_t* engine);
@@ -863,21 +863,21 @@ namespace F3D.Native
         public static extern f3d_backend_info_t* f3d_engine_get_rendering_backend_list(int* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_engine_load_plugin([NativeTypeName("const char *")] sbyte* path_or_name);
+        public static extern int f3d_engine_load_plugin([MarshalAs(UnmanagedType.LPUTF8Str)] string path_or_name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_engine_autoload_plugins();
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
-        public static extern sbyte** f3d_engine_get_plugins_list([NativeTypeName("const char *")] sbyte* plugin_path);
+        public static extern sbyte** f3d_engine_get_plugins_list([MarshalAs(UnmanagedType.LPUTF8Str)] string plugin_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
         public static extern sbyte** f3d_engine_get_all_reader_option_names();
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_engine_set_reader_option([NativeTypeName("const char *")] sbyte* name, [NativeTypeName("const char *")] sbyte* value);
+        public static extern int f3d_engine_set_reader_option([MarshalAs(UnmanagedType.LPUTF8Str)] string name, [MarshalAs(UnmanagedType.LPUTF8Str)] string value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_engine_destroy_backend_list(f3d_backend_info_t* backends);
@@ -907,7 +907,7 @@ namespace F3D.Native
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("f3d_image_t *")]
-        public static extern f3d_image* f3d_image_create_path([NativeTypeName("const char *")] sbyte* path);
+        public static extern f3d_image* f3d_image_create_path([MarshalAs(UnmanagedType.LPUTF8Str)] string path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("f3d_image_t *")]
@@ -962,7 +962,7 @@ namespace F3D.Native
         public static extern double f3d_image_compare([NativeTypeName("f3d_image_t *")] f3d_image* img, [NativeTypeName("f3d_image_t *")] f3d_image* reference);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_image_save([NativeTypeName("f3d_image_t *")] f3d_image* img, [NativeTypeName("const char *")] sbyte* path, f3d_image_save_format_t format);
+        public static extern int f3d_image_save([NativeTypeName("f3d_image_t *")] f3d_image* img, [MarshalAs(UnmanagedType.LPUTF8Str)] string path, f3d_image_save_format_t format);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("unsigned char *")]
@@ -979,11 +979,11 @@ namespace F3D.Native
         public static extern sbyte* f3d_image_to_terminal_text_string([NativeTypeName("f3d_image_t *")] f3d_image* img);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_image_set_metadata([NativeTypeName("f3d_image_t *")] f3d_image* img, [NativeTypeName("const char *")] sbyte* key, [NativeTypeName("const char *")] sbyte* value);
+        public static extern void f3d_image_set_metadata([NativeTypeName("f3d_image_t *")] f3d_image* img, [MarshalAs(UnmanagedType.LPUTF8Str)] string key, [MarshalAs(UnmanagedType.LPUTF8Str)] string value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
-        public static extern sbyte* f3d_image_get_metadata([NativeTypeName("f3d_image_t *")] f3d_image* img, [NativeTypeName("const char *")] sbyte* key);
+        public static extern sbyte* f3d_image_get_metadata([NativeTypeName("f3d_image_t *")] f3d_image* img, [MarshalAs(UnmanagedType.LPUTF8Str)] string key);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
@@ -996,7 +996,7 @@ namespace F3D.Native
         public static extern void f3d_interaction_bind_format([NativeTypeName("const f3d_interaction_bind_t *")] f3d_interaction_bind_t* bind, [NativeTypeName("char *")] sbyte* output, int output_size);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_interaction_bind_parse([NativeTypeName("const char *")] sbyte* str, f3d_interaction_bind_t* bind);
+        public static extern void f3d_interaction_bind_parse([MarshalAs(UnmanagedType.LPUTF8Str)] string str, f3d_interaction_bind_t* bind);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int f3d_interaction_bind_less_than([NativeTypeName("const f3d_interaction_bind_t *")] f3d_interaction_bind_t* lhs, [NativeTypeName("const f3d_interaction_bind_t *")] f3d_interaction_bind_t* rhs);
@@ -1008,17 +1008,17 @@ namespace F3D.Native
         public static extern void f3d_interactor_init_commands(f3d_interactor_t* interactor);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_interactor_add_command(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* action, [NativeTypeName("f3d_interactor_command_callback_t")] delegate* unmanaged[Cdecl]<sbyte**, int, void*, void> callback, void* user_data);
+        public static extern void f3d_interactor_add_command(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string action, [NativeTypeName("f3d_interactor_command_callback_t")] delegate* unmanaged[Cdecl]<sbyte**, int, void*, void> callback, void* user_data);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_interactor_remove_command(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* action);
+        public static extern void f3d_interactor_remove_command(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string action);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
         public static extern sbyte** f3d_interactor_get_command_actions(f3d_interactor_t* interactor, int* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_interactor_trigger_command(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* command, int keep_comments);
+        public static extern int f3d_interactor_trigger_command(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string command, int keep_comments);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_interactor_init_bindings(f3d_interactor_t* interactor);
@@ -1034,7 +1034,7 @@ namespace F3D.Native
         public static extern sbyte** f3d_interactor_get_bind_groups(f3d_interactor_t* interactor, int* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern f3d_interaction_bind_t* f3d_interactor_get_binds_for_group(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* group, int* count);
+        public static extern f3d_interaction_bind_t* f3d_interactor_get_binds_for_group(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string group, int* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern f3d_interaction_bind_t* f3d_interactor_get_binds(f3d_interactor_t* interactor, int* count);
@@ -1064,7 +1064,7 @@ namespace F3D.Native
         public static extern void f3d_interactor_trigger_mouse_wheel(f3d_interactor_t* interactor, f3d_interactor_wheel_direction_t direction);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_interactor_trigger_keyboard_key(f3d_interactor_t* interactor, f3d_interactor_input_action_t action, [NativeTypeName("const char *")] sbyte* key_sym);
+        public static extern void f3d_interactor_trigger_keyboard_key(f3d_interactor_t* interactor, f3d_interactor_input_action_t action, [MarshalAs(UnmanagedType.LPUTF8Str)] string key_sym);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_interactor_trigger_text_character(f3d_interactor_t* interactor, [NativeTypeName("unsigned int")] uint codepoint);
@@ -1073,10 +1073,10 @@ namespace F3D.Native
         public static extern void f3d_interactor_trigger_event_loop(f3d_interactor_t* interactor, double delta_time);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_interactor_play_interaction(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* file_path, double delta_time);
+        public static extern int f3d_interactor_play_interaction(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path, double delta_time);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_interactor_record_interaction(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* file_path);
+        public static extern int f3d_interactor_record_interaction(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_interactor_start(f3d_interactor_t* interactor, double delta_time);
@@ -1097,7 +1097,7 @@ namespace F3D.Native
         public static extern void f3d_interactor_request_stop(f3d_interactor_t* interactor);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_interactor_trigger_notification(f3d_interactor_t* interactor, [NativeTypeName("const char *")] sbyte* desc, [NativeTypeName("const char *")] sbyte* value, double duration);
+        public static extern void f3d_interactor_trigger_notification(f3d_interactor_t* interactor, [MarshalAs(UnmanagedType.LPUTF8Str)] string desc, [MarshalAs(UnmanagedType.LPUTF8Str)] string value, double duration);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_interactor_destroy_string_array([NativeTypeName("char **")] sbyte** array, int count);
@@ -1106,19 +1106,19 @@ namespace F3D.Native
         public static extern void f3d_interactor_destroy_bind_array(f3d_interaction_bind_t* array);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_log_print(f3d_log_verbose_level_t level, [NativeTypeName("const char *")] sbyte* message);
+        public static extern void f3d_log_print(f3d_log_verbose_level_t level, [MarshalAs(UnmanagedType.LPUTF8Str)] string message);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_log_debug([NativeTypeName("const char *")] sbyte* message);
+        public static extern void f3d_log_debug([MarshalAs(UnmanagedType.LPUTF8Str)] string message);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_log_info([NativeTypeName("const char *")] sbyte* message);
+        public static extern void f3d_log_info([MarshalAs(UnmanagedType.LPUTF8Str)] string message);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_log_warn([NativeTypeName("const char *")] sbyte* message);
+        public static extern void f3d_log_warn([MarshalAs(UnmanagedType.LPUTF8Str)] string message);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_log_error([NativeTypeName("const char *")] sbyte* message);
+        public static extern void f3d_log_error([MarshalAs(UnmanagedType.LPUTF8Str)] string message);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_log_set_use_coloring(int use);
@@ -1139,42 +1139,42 @@ namespace F3D.Native
         public static extern void f3d_options_destroy(f3d_options_t* options);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_bool(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, int value);
+        public static extern void f3d_options_set_as_bool(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, int value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_int(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, int value);
+        public static extern void f3d_options_set_as_int(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, int value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_double(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, double value);
+        public static extern void f3d_options_set_as_double(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, double value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_string(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("const char *")] sbyte* value);
+        public static extern void f3d_options_set_as_string(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [MarshalAs(UnmanagedType.LPUTF8Str)] string value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_double_vector(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("const double *")] double* values, [NativeTypeName("size_t")] nuint count);
+        public static extern void f3d_options_set_as_double_vector(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [NativeTypeName("const double *")] double* values, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_int_vector(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("const int *")] int* values, [NativeTypeName("size_t")] nuint count);
+        public static extern void f3d_options_set_as_int_vector(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [NativeTypeName("const int *")] int* values, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_get_as_bool([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern int f3d_options_get_as_bool([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_get_as_int([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern int f3d_options_get_as_int([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern double f3d_options_get_as_double([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
-
-        [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const char *")]
-        public static extern sbyte* f3d_options_get_as_string([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern double f3d_options_get_as_double([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
-        public static extern sbyte* f3d_options_get_as_string_representation([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern sbyte* f3d_options_get_as_string([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_set_as_string_representation(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("const char *")] sbyte* str);
+        [return: NativeTypeName("const char *")]
+        public static extern sbyte* f3d_options_get_as_string_representation([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
+
+        [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void f3d_options_set_as_string_representation(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [MarshalAs(UnmanagedType.LPUTF8Str)] string str);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_options_destroy_string([NativeTypeName("const char *")] sbyte* str);
@@ -1183,22 +1183,22 @@ namespace F3D.Native
         public static extern void f3d_options_destroy_string_array([NativeTypeName("char **")] sbyte** array, int count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_get_as_double_vector([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, double* values, [NativeTypeName("size_t *")] nuint* count);
+        public static extern void f3d_options_get_as_double_vector([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, double* values, [NativeTypeName("size_t *")] nuint* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_get_as_int_vector([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, int* values, [NativeTypeName("size_t *")] nuint* count);
+        public static extern void f3d_options_get_as_int_vector([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, int* values, [NativeTypeName("size_t *")] nuint* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_toggle(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_toggle(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_is_same([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const f3d_options_t *")] f3d_options_t* other, [NativeTypeName("const char *")] sbyte* name);
+        public static extern int f3d_options_is_same([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const f3d_options_t *")] f3d_options_t* other, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_has_value([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern int f3d_options_has_value([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_copy(f3d_options_t* options, [NativeTypeName("const f3d_options_t *")] f3d_options_t* other, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_copy(f3d_options_t* options, [NativeTypeName("const f3d_options_t *")] f3d_options_t* other, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
@@ -1209,69 +1209,69 @@ namespace F3D.Native
         public static extern sbyte** f3d_options_get_names([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("size_t *")] nuint* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_get_closest_option([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* option, [NativeTypeName("char **")] sbyte** closest, [NativeTypeName("unsigned int *")] uint* distance);
+        public static extern void f3d_options_get_closest_option([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string option, [NativeTypeName("char **")] sbyte** closest, [NativeTypeName("unsigned int *")] uint* distance);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_options_destroy_names([NativeTypeName("char **")] sbyte** names, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_is_optional([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern int f3d_options_is_optional([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_reset(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_reset(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_remove_value(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_remove_value(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_has_domain([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern int f3d_options_has_domain([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern f3d_domain_style_t f3d_options_get_domain_style([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern f3d_domain_style_t f3d_options_get_domain_style([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_get_range_domain_double([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("double[3]")] double* range);
+        public static extern int f3d_options_get_range_domain_double([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [NativeTypeName("double[3]")] double* range);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_get_range_domain_int([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("int[3]")] int* range);
+        public static extern int f3d_options_get_range_domain_int([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [NativeTypeName("int[3]")] int* range);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
-        public static extern sbyte** f3d_options_get_enum_domain_string([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, int* count);
+        public static extern sbyte** f3d_options_get_enum_domain_string([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, int* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_get_index_domain([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name, [NativeTypeName("unsigned int *")] uint* max);
+        public static extern int f3d_options_get_index_domain([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, [NativeTypeName("unsigned int *")] uint* max);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_increase(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_increase(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_decrease(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_decrease(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_cycle(f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern void f3d_options_cycle(f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern f3d_option_type_t f3d_options_get_type([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [NativeTypeName("const char *")] sbyte* name);
+        public static extern f3d_option_type_t f3d_options_get_type([NativeTypeName("const f3d_options_t *")] f3d_options_t* options, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_parse_bool([NativeTypeName("const char *")] sbyte* str);
+        public static extern int f3d_options_parse_bool([MarshalAs(UnmanagedType.LPUTF8Str)] string str);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_options_parse_int([NativeTypeName("const char *")] sbyte* str);
+        public static extern int f3d_options_parse_int([MarshalAs(UnmanagedType.LPUTF8Str)] string str);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern double f3d_options_parse_double([NativeTypeName("const char *")] sbyte* str);
+        public static extern double f3d_options_parse_double([MarshalAs(UnmanagedType.LPUTF8Str)] string str);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
-        public static extern sbyte* f3d_options_parse_string([NativeTypeName("const char *")] sbyte* str);
+        public static extern sbyte* f3d_options_parse_string([MarshalAs(UnmanagedType.LPUTF8Str)] string str);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_parse_double_vector([NativeTypeName("const char *")] sbyte* str, double* values, [NativeTypeName("size_t *")] nuint* count);
+        public static extern void f3d_options_parse_double_vector([MarshalAs(UnmanagedType.LPUTF8Str)] string str, double* values, [NativeTypeName("size_t *")] nuint* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_options_parse_int_vector([NativeTypeName("const char *")] sbyte* str, int* values, [NativeTypeName("size_t *")] nuint* count);
+        public static extern void f3d_options_parse_int_vector([MarshalAs(UnmanagedType.LPUTF8Str)] string str, int* values, [NativeTypeName("size_t *")] nuint* count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
@@ -1287,7 +1287,7 @@ namespace F3D.Native
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
-        public static extern sbyte* f3d_options_format_string([NativeTypeName("const char *")] sbyte* value);
+        public static extern sbyte* f3d_options_format_string([MarshalAs(UnmanagedType.LPUTF8Str)] string value);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
@@ -1298,10 +1298,10 @@ namespace F3D.Native
         public static extern sbyte* f3d_options_format_int_vector([NativeTypeName("const int *")] int* values, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_scene_add(f3d_scene_t* scene, [NativeTypeName("const char *")] sbyte* file_path);
+        public static extern int f3d_scene_add(f3d_scene_t* scene, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_scene_add_multiple(f3d_scene_t* scene, [NativeTypeName("const char **")] sbyte** file_paths, [NativeTypeName("size_t")] nuint count);
+        public static extern int f3d_scene_add_multiple(f3d_scene_t* scene, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)] string[] file_paths, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int f3d_scene_add_mesh(f3d_scene_t* scene, [NativeTypeName("const f3d_mesh_t *")] f3d_mesh_t* mesh);
@@ -1353,7 +1353,7 @@ namespace F3D.Native
         public static extern int f3d_scene_get_scene_info([NativeTypeName("const f3d_scene_t *")] f3d_scene_t* scene, f3d_scene_info_t* info);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_scene_supports(f3d_scene_t* scene, [NativeTypeName("const char *")] sbyte* file_path);
+        public static extern int f3d_scene_supports(f3d_scene_t* scene, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int f3d_scene_supports_buffer(f3d_scene_t* scene, [NativeTypeName("const void *")] void* buffer, [NativeTypeName("size_t")] nuint size);
@@ -1402,26 +1402,26 @@ namespace F3D.Native
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("unsigned int")]
-        public static extern uint f3d_utils_text_distance([NativeTypeName("const char *")] sbyte* str_a, [NativeTypeName("const char *")] sbyte* str_b);
+        public static extern uint f3d_utils_text_distance([MarshalAs(UnmanagedType.LPUTF8Str)] string str_a, [MarshalAs(UnmanagedType.LPUTF8Str)] string str_b);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char **")]
-        public static extern sbyte** f3d_utils_tokenize([NativeTypeName("const char *")] sbyte* str, int keep_comments, [NativeTypeName("size_t *")] nuint* out_count);
+        public static extern sbyte** f3d_utils_tokenize([MarshalAs(UnmanagedType.LPUTF8Str)] string str, int keep_comments, [NativeTypeName("size_t *")] nuint* out_count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_utils_tokens_destroy([NativeTypeName("char **")] sbyte** tokens, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char *")]
-        public static extern sbyte* f3d_utils_collapse_path([NativeTypeName("const char *")] sbyte* path, [NativeTypeName("const char *")] sbyte* base_directory);
+        public static extern sbyte* f3d_utils_collapse_path([MarshalAs(UnmanagedType.LPUTF8Str)] string path, [MarshalAs(UnmanagedType.LPUTF8Str)] string base_directory);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char *")]
-        public static extern sbyte* f3d_utils_glob_to_regex([NativeTypeName("const char *")] sbyte* glob, [NativeTypeName("char")] sbyte path_separator);
+        public static extern sbyte* f3d_utils_glob_to_regex([MarshalAs(UnmanagedType.LPUTF8Str)] string glob, [NativeTypeName("char")] sbyte path_separator);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char *")]
-        public static extern sbyte* f3d_utils_get_env([NativeTypeName("const char *")] sbyte* env);
+        public static extern sbyte* f3d_utils_get_env([MarshalAs(UnmanagedType.LPUTF8Str)] string env);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char *")]
@@ -1522,7 +1522,7 @@ namespace F3D.Native
         public static extern void f3d_window_set_icon(f3d_window_t* window, [NativeTypeName("const unsigned char *")] byte* icon, [NativeTypeName("size_t")] nuint icon_size);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void f3d_window_set_window_name(f3d_window_t* window, [NativeTypeName("const char *")] sbyte* window_name);
+        public static extern void f3d_window_set_window_name(f3d_window_t* window, [MarshalAs(UnmanagedType.LPUTF8Str)] string window_name);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void f3d_window_get_world_from_display([NativeTypeName("const f3d_window_t *")] f3d_window_t* window, [NativeTypeName("const f3d_point3_t")] double* display_point, [NativeTypeName("f3d_point3_t")] double* world_point);
