@@ -201,9 +201,10 @@ public sealed unsafe class Engine : IDisposable
     //public static ReaderInfo GetReadersInfo(out int count) => NativeMethods.f3d_engine_get_readers_info(out count);
     //public static void DestroyReadersInfo(ReaderInfo readers) => NativeMethods.f3d_engine_destroy_readers_info(readers);
 
-    public Options Options { get => new(NativeMethods.f3d_engine_get_options(this)); }
-    public Scene Scene { get => new(NativeMethods.f3d_engine_get_scene(this)); }
-    public Interactor Interactor { get => new(NativeMethods.f3d_engine_get_interactor(this)); }
+    public Options Options { get; set; }
+    public Scene Scene { get; set; }
+    public Interactor Interactor { get; set; }
+    public Window Window { get; set; }
 
     public void Dispose()
     {
