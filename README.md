@@ -6,7 +6,8 @@ Minimal C# bindings for F3D, using libf3d's C API. Laid out like F3D's Java bind
 ## Files
 
 - `src/`: the library (`F3D.csproj`, builds `F3D.dll`)
-  - `Engine.cs`, `Options.cs`, `Scene.cs`, `Interactor.cs`: one class per F3D class, calling `F3D.Native.NativeMethods`
+  - `<Class>.cs` (`Engine.cs`, `Scene.cs`, `Window.cs`, ...): one class per F3D class, calling `F3D.Native.NativeMethods`
+  - `NativeUtils.cs`: internal helpers shared by the classes (string conversion, ...)
   - `F3DException.cs`: base class for F3D errors
   - `F3D/Native/NativeMethods.g.cs`: generated P/Invoke declarations for the C API
 - `include/f3d/`: the F3D C API headers the bindings are generated from
@@ -32,10 +33,10 @@ and install it. The CMake files in the F3D build folder only work once installed
 cmake --install ../f3d/build --prefix ../f3d-install
 ```
 
-## Build and test
+## Build
 
 ```sh
-cmake -S . -B build -Df3dDIR=<f3d install>/lib64/cmake/f3d -DBUILD_TESTING=ON
+cmake -S . -B build -Df3d_DIR=<f3d install>/lib64/cmake/f3d -DBUILD_TESTING=ON
 cmake --build build
 ctest --test-dir build
 ```
@@ -48,6 +49,37 @@ yourself. Its libraries are copied next to each program:
 
 ```sh
 dotnet build F3D.sln -p:F3DLibDir=<f3d install>/lib64
+```
+
+## Tests
+
+Download only the files the tests need:
+
+```sh
+mkdir -p ../f3d-testing/data
+curl -L -o ../f3d-testing/data/soldier_animations.mdl \
+  https://media.githubusercontent.com/media/f3d-app/f3d/master/testing/data/soldier_animations.mdl
+# data dir: ../f3d-testing
+```
+
+| Test | Data files |
+|---|---|
+| `TestAnimation` | `data/soldier_animations.mdl` |
+
+```sh
+cmake -S . -B build -Df3d_DIR=<f3d install>/lib64/cmake/f3d -DBUILD_TESTING=ON \
+  -DF3D_CSHARP_TESTING_DATA_DIR=$PWD/../f3d-testing
+cmake --build build
+ctest --test-dir build                         # all tests
+ctest --test-dir build -R test_animation -V    # one test, verbose
+```
+
+Without CMake, run a test directly:
+
+```sh
+dotnet testing/bin/Debug/net8.0/Tests.dll <TestName> <data dir>/ <output dir>/
+# e.g.
+dotnet testing/bin/Debug/net8.0/Tests.dll TestAnimation ../f3d-testing/ /tmp/
 ```
 
 ## Run the viewer
