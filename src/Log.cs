@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using F3D.Native;
 
 namespace F3D;
@@ -38,13 +37,10 @@ public static unsafe class Log
     /// </summary>
     /// <param name="message">message string</param>
     /// <param name="nativeLog">native log function</param>
-    static void Send(string message, delegate*<sbyte*, void> nativeLog)
+    static void Send(string message, Action<string> nativeLog)
     {
         ArgumentNullException.ThrowIfNull(message);
-        fixed (byte* str = Encoding.UTF8.GetBytes(message + '\0'))
-        {
-            nativeLog((sbyte*)str);
-        }
+        nativeLog(message);
     }
 
     /// <summary>
@@ -55,35 +51,32 @@ public static unsafe class Log
     public static void Print(LogVerboseLevel level, string message)
     {
         ArgumentNullException.ThrowIfNull(message);
-        fixed (byte* str = Encoding.UTF8.GetBytes(message + '\0'))
-        {
-            NativeMethods.f3d_log_print((f3d_log_verbose_level_t)level, (sbyte*)str);
-        }
+        NativeMethods.f3d_log_print((f3d_log_verbose_level_t)level, message);
     }
 
     /// <summary>
     /// Log a debug message.
     /// </summary>
     /// <param name="message">message string</param>
-    public static void Debug(string message) => Send(message, &NativeMethods.f3d_log_debug);
+    public static void Debug(string message) => Send(message, NativeMethods.f3d_log_debug);
 
     /// <summary>
     /// Log an info message.
     /// </summary>
     /// <param name="message">message string</param>
-    public static void Info(string message) => Send(message, &NativeMethods.f3d_log_info);
+    public static void Info(string message) => Send(message, NativeMethods.f3d_log_info);
 
     /// <summary>
     /// Log a warning message.
     /// </summary>
     /// <param name="message">message string</param>
-    public static void Warn(string message) => Send(message, &NativeMethods.f3d_log_warn);
+    public static void Warn(string message) => Send(message, NativeMethods.f3d_log_warn);
 
     /// <summary>
     /// Log an error message.
     /// </summary>
     /// <param name="message">message string</param>
-    public static void Error(string message) => Send(message, &NativeMethods.f3d_log_error);
+    public static void Error(string message) => Send(message, NativeMethods.f3d_log_error);
 
     /// <summary>
     /// Set the coloring usage.

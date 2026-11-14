@@ -28,12 +28,7 @@ public static unsafe class Utils
     {
         ArgumentNullException.ThrowIfNull(strA);
         ArgumentNullException.ThrowIfNull(strB);
-
-        byte[] utf8A = NativeUtils.EncodeNullTerminated(strA);
-        byte[] utf8B = NativeUtils.EncodeNullTerminated(strB);
-        fixed (byte* pA = utf8A)
-        fixed (byte* pB = utf8B)
-            return NativeMethods.f3d_utils_text_distance((sbyte*)pA, (sbyte*)pB);
+        return NativeMethods.f3d_utils_text_distance(strA, strB);
     }
 
     /// <summary>
@@ -45,33 +40,28 @@ public static unsafe class Utils
     public static List<string> Tokenize(string str, bool keepComments)
     {
         ArgumentNullException.ThrowIfNull(str);
-        byte[] utf8 = NativeUtils.EncodeNullTerminated(str);
 
-        fixed (byte* pString = utf8)
+        nuint count = 0;
+        sbyte** tokens = NativeMethods.f3d_utils_tokenize(str, keepComments ? 1 : 0, &count);
+        if (tokens == null)
+            throw new F3DException("Could not tokenize the input string.");
+
+        try
         {
-            nuint count = 0;
-            sbyte** tokens = NativeMethods.f3d_utils_tokenize(
-                (sbyte*)pString, keepComments ? 1 : 0, &count);
-            if (tokens == null)
-                throw new F3DException("Could not tokenize the input string.");
-
-            try
+            var result = new List<string>(checked((int)count));
+            for (nuint i = 0; i < count; i++)
             {
-                var result = new List<string>(checked((int)count));
-                for (nuint i = 0; i < count; i++)
-                {
-                    string? token = Marshal.PtrToStringUTF8((IntPtr)tokens[i]);
-                    if (token is null)
-                        throw new F3DException($"Native tokenizer returned a null token at index {i}.");
-                    result.Add(token);
-                }
+                string? token = Marshal.PtrToStringUTF8((IntPtr)tokens[i]);
+                if (token is null)
+                    throw new F3DException($"Native tokenizer returned a null token at index {i}.");
+                result.Add(token);
+            }
 
-                return result;
-            }
-            finally
-            {
-                NativeMethods.f3d_utils_tokens_destroy(tokens, count);
-            }
+            return result;
+        }
+        finally
+        {
+            NativeMethods.f3d_utils_tokens_destroy(tokens, count);
         }
     }
 
@@ -93,15 +83,8 @@ public static unsafe class Utils
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(baseDirectory);
 
-        byte[] utf8Path = NativeUtils.EncodeNullTerminated(path);
-        byte[] utf8BaseDirectory = NativeUtils.EncodeNullTerminated(baseDirectory);
-        fixed (byte* pPath = utf8Path)
-        fixed (byte* pBaseDirectory = utf8BaseDirectory)
-        {
-            sbyte* result = NativeMethods.f3d_utils_collapse_path(
-                (sbyte*)pPath, (sbyte*)pBaseDirectory);
-            return NativeUtils.TakeString(result, "Could not collapse the path.");
-        }
+        sbyte* result = NativeMethods.f3d_utils_collapse_path(path, baseDirectory);
+        return NativeUtils.TakeString(result, "Could not collapse the path.");
     }
 
     /// <summary>
@@ -123,13 +106,8 @@ public static unsafe class Utils
         if (pathSeparator > sbyte.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(pathSeparator), "The native API accepts an 8-bit path separator.");
 
-        byte[] utf8 = NativeUtils.EncodeNullTerminated(glob);
-        fixed (byte* pGlob = utf8)
-        {
-            sbyte* result = NativeMethods.f3d_utils_glob_to_regex(
-                (sbyte*)pGlob, (sbyte)pathSeparator);
-            return result == null ? null : NativeUtils.TakeString(result, "Could not convert the glob expression.");
-        }
+        sbyte* result = NativeMethods.f3d_utils_glob_to_regex(glob, (sbyte)pathSeparator);
+        return result == null ? null : NativeUtils.TakeString(result, "Could not convert the glob expression.");
     }
 
     /// <summary>
@@ -148,12 +126,8 @@ public static unsafe class Utils
     {
         ArgumentNullException.ThrowIfNull(env);
 
-        byte[] utf8 = NativeUtils.EncodeNullTerminated(env);
-        fixed (byte* pEnv = utf8)
-        {
-            sbyte* result = NativeMethods.f3d_utils_get_env((sbyte*)pEnv);
-            return result == null ? null : NativeUtils.TakeString(result, $"Could not read environment variable '{env}'.");
-        }
+        sbyte* result = NativeMethods.f3d_utils_get_env(env);
+        return result == null ? null : NativeUtils.TakeString(result, $"Could not read environment variable '{env}'.");
     }
 
     /// <summary>
