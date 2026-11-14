@@ -13,6 +13,7 @@ static class TestImage
         TestMetadata();
         TestComparisonAndEquality();
         TestSaveAndReloadBuffer();
+        TestEmptyStream();
         TestExceptions();
         TestSupportedFormats();
     }
@@ -95,6 +96,22 @@ static class TestImage
         using var reloaded = new Image(pngBytes);
         Debug.Assert(reloaded.Width == 32);
         Debug.Assert(reloaded.Height == 32);
+        Debug.Assert(original.Compare(reloaded) == 0.0);
+    }
+
+    private static void TestEmptyStream()
+    {
+        bool readExceptionThrown = false;
+        try
+        {
+            using var invalid = new Image(ReadOnlySpan<byte>.Empty);
+        }
+        catch (Image.ReadException)
+        {
+            readExceptionThrown = true;
+        }
+
+        Debug.Assert(readExceptionThrown);
     }
 
     private static void TestExceptions()
