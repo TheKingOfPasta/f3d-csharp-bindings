@@ -13,6 +13,7 @@ public sealed unsafe class Engine : IDisposable
         Options = new Options(NativeMethods.f3d_engine_get_options(handle));
         Scene = new Scene(NativeMethods.f3d_engine_get_scene(handle));
         Interactor = new Interactor(NativeMethods.f3d_engine_get_interactor(handle));
+        Window = new Window(NativeMethods.f3d_engine_get_window(handle));
     }
 
     public static Engine Create(bool offscreen = false) => new(NativeMethods.f3d_engine_create(offscreen ? 1 : 0));
@@ -22,6 +23,7 @@ public sealed unsafe class Engine : IDisposable
     public Options Options { get; }
     public Scene Scene { get; }
     public Interactor Interactor { get; }
+    public Window Window { get; }
 
     public void Dispose()
     {
