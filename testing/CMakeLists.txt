@@ -16,9 +16,13 @@ list(APPEND csharpf3dTests_list
   VideoEncoder
   Utils
   Types
+<<<<<<< HEAD
   Animation
   Camera
   Log
+=======
+  Window
+>>>>>>> test/window
   )
 
 foreach(test_name ${csharpf3dTests_list})
