@@ -102,13 +102,18 @@ public sealed unsafe class Engine : IDisposable
     public string GetCachePath()
     {
         sbyte* resBytes = NativeMethods.f3d_engine_get_cache_path(this);
+        if (resBytes == null)
+            throw new F3DException("Could not retrieve the engine cache path.");
 
-        string res = "";
-
-        for (int i = 0; resBytes[i] != 0; i++)
-            res += resBytes[i];
-
-        return res;
+        try
+        {
+            return Marshal.PtrToStringUTF8((IntPtr)resBytes)
+                ?? throw new F3DException("Could not decode the engine cache path.");
+        }
+        finally
+        {
+            NativeMethods.f3d_engine_destroy_string(resBytes);
+        }
     }
 
     /// <summary>
@@ -119,13 +124,18 @@ public sealed unsafe class Engine : IDisposable
     public string DumpToString()
     {
         sbyte* resBytes = NativeMethods.f3d_engine_dump_to_string(this);
+        if (resBytes == null)
+            throw new F3DException("Could not serialize the engine state.");
 
-        string res = "";
-
-        for (int i = 0; resBytes[i] != 0; i++)
-            res += resBytes[i];
-
-        return res;
+        try
+        {
+            return Marshal.PtrToStringUTF8((IntPtr)resBytes)
+                ?? throw new F3DException("Could not decode the engine state.");
+        }
+        finally
+        {
+            NativeMethods.f3d_engine_destroy_string(resBytes);
+        }
     }
     public int DumpToFile(string file_path) => NativeMethods.f3d_engine_dump_to_file(this, file_path);
     public int DumpToClipboard() => NativeMethods.f3d_engine_dump_to_clipboard(this);
@@ -154,18 +164,27 @@ public sealed unsafe class Engine : IDisposable
     /// <returns>list of available plugin names</returns>
     public string[] GetPluginsList(string plugin_path)
     {
+        ArgumentNullException.ThrowIfNull(plugin_path);
         sbyte** resAsBytes = NativeMethods.f3d_engine_get_plugins_list(plugin_path);
-        List<string> resList = new List<string>();
-        for (int i = 0; resAsBytes[i] != null; i++)
+        if (resAsBytes == null)
+            return [];
+
+        try
         {
-            string? tmp = Marshal.PtrToStringUTF8((IntPtr)resAsBytes[i]);
-            if (tmp == null)
-                continue;
+            List<string> resList = new();
+            for (int i = 0; resAsBytes[i] != null; i++)
+            {
+                string? tmp = Marshal.PtrToStringUTF8((IntPtr)resAsBytes[i]);
+                if (tmp != null)
+                    resList.Add(tmp);
+            }
 
-            resList.Add(tmp!);
+            return resList.ToArray();
         }
-
-        return resList.ToArray();
+        finally
+        {
+            NativeMethods.f3d_engine_destroy_string_array(resAsBytes);
+        }
     }
 
     /// <summary>
@@ -175,17 +194,25 @@ public sealed unsafe class Engine : IDisposable
     public static string[] GetAllReaderOptionNames()
     {
         sbyte** resAsBytes = NativeMethods.f3d_engine_get_all_reader_option_names();
-        List<string> resList = new List<string>();
-        for (int i = 0; resAsBytes[i] != null; i++)
+        if (resAsBytes == null)
+            return [];
+
+        try
         {
-            string? tmp = Marshal.PtrToStringUTF8((IntPtr)resAsBytes[i]);
-            if (tmp == null)
-                continue;
+            List<string> resList = new();
+            for (int i = 0; resAsBytes[i] != null; i++)
+            {
+                string? tmp = Marshal.PtrToStringUTF8((IntPtr)resAsBytes[i]);
+                if (tmp != null)
+                    resList.Add(tmp);
+            }
 
-            resList.Add(tmp!);
+            return resList.ToArray();
         }
-
-        return resList.ToArray();
+        finally
+        {
+            NativeMethods.f3d_engine_destroy_string_array(resAsBytes);
+        }
     }
 
     /// <summary>
