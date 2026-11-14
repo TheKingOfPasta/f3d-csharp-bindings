@@ -11,10 +11,9 @@ public sealed unsafe class Scene
 
     public Scene Add(string filePath)
     {
-        fixed (byte* path = Encoding.UTF8.GetBytes(filePath + '\0'))
         {
-            if (NativeMethods.f3d_scene_add(_handle, (sbyte*)path) == 0) // 1 = success, 0 = failure
-                throw new F3DException($"Could not load: {filePath}");
+        if (NativeMethods.f3d_scene_add(_handle, filePath) == 0) // 1 = success, 0 = failure
+            throw new F3DException($"Could not load: {filePath}");
         }
         return this;
     }
