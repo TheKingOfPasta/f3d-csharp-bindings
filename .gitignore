@@ -12,6 +12,10 @@ obj/
 .vscode/
 .idea/
 *.user
+.DS_Store
 
 # assets
 /assets
+
+# demo outputs
+*.png
