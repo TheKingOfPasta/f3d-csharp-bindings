@@ -73,7 +73,9 @@ public sealed unsafe class Animation
     /// Get the current animation name, if any.
     /// </summary>
     /// <value>animation names or string error</value>
-    public string? CurrentName => NativeUtils.TakeString(NativeMethods.f3d_animation_get_current_name(_handle), "No current name found.");
+    public string CurrentName
+        => NativeUtils.TakeString(NativeMethods.f3d_animation_get_current_name(_handle),
+            "No current name found.", &NativeMethods.f3d_animation_destroy_string);
 
     /// <summary>
     /// Get the animation name of a given animation index, if any.
@@ -81,7 +83,8 @@ public sealed unsafe class Animation
     /// <param name="index">animation index</param>
     /// <returns>animation name or string error</returns>
     public string GetName(int index)
-        => NativeUtils.TakeString(NativeMethods.f3d_animation_get_name(_handle, index), $"No animation at index {index}");
+        => NativeUtils.TakeString(NativeMethods.f3d_animation_get_name(_handle, index),
+            $"No animation at index {index}", &NativeMethods.f3d_animation_destroy_string);
 
     /// <summary>
     /// Get all of the animation names, if any.

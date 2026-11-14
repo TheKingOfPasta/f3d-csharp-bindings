@@ -14,6 +14,9 @@ internal static unsafe class NativeUtils
     }
 
     internal static string TakeString(sbyte* value, string errorMessage)
+        => TakeString(value, errorMessage, &NativeMethods.f3d_utils_string_destroy);
+
+    internal static string TakeString(sbyte* value, string errorMessage, delegate*<sbyte*, void> destroy)
     {
         if (value == null)
             throw new F3DException(errorMessage);
@@ -25,7 +28,7 @@ internal static unsafe class NativeUtils
         }
         finally
         {
-            NativeMethods.f3d_utils_string_destroy(value);
+            destroy(value);
         }
     }
 }
