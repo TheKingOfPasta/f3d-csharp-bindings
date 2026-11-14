@@ -16,6 +16,7 @@ list(APPEND csharpf3dTests_list
   VideoEncoder
   Utils
   Types
+  Transform2D
   Animation
   Camera
   Log
