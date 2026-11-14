@@ -7,6 +7,10 @@ var tests = new Dictionary<string, Action<string[]>>
     ["TestInteractor"] = TestInteractor.Run,
     ["TestOptions"] = TestOptions.Run,
     ["TestScene"] = TestScene.Run,
+    ["TestImage"] = TestImage.Run,
+    ["TestVideoPacket"] = TestVideoPacket.Run,
+    ["TestUtils"] = TestUtils.Run,
+    ["TestTypes"] = TestTypes.Run,
 };
 
 if (args.Length < 1 || !tests.TryGetValue(args[0], out var test))
