@@ -17,4 +17,12 @@ public sealed unsafe class Scene
         }
         return this;
     }
+    public Scene AddMultiple(string[] filePaths)
+    {
+        {
+        if (NativeMethods.f3d_scene_add_multiple(_handle, filePaths, (nuint)filePaths.Length) == 0) // 1 = success, 0 = failure
+            throw new F3DException($"Could not load: {filePaths}");
+        }
+        return this;
+    }
 }

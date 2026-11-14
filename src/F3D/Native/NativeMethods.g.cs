@@ -1301,7 +1301,7 @@ namespace F3D.Native
         public static extern int f3d_scene_add(f3d_scene_t* scene, [MarshalAs(UnmanagedType.LPUTF8Str)] string file_path);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int f3d_scene_add_multiple(f3d_scene_t* scene, [NativeTypeName("const char **")] sbyte** file_paths, [NativeTypeName("size_t")] nuint count);
+        public static extern int f3d_scene_add_multiple(f3d_scene_t* scene, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)] string[] file_paths, [NativeTypeName("size_t")] nuint count);
 
         [DllImport("libf3d_c_api", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int f3d_scene_add_mesh(f3d_scene_t* scene, [NativeTypeName("const f3d_mesh_t *")] f3d_mesh_t* mesh);
