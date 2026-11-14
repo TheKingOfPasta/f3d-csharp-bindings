@@ -1,4 +1,3 @@
-using System.Text;
 using F3D.Native;
 
 namespace F3D;
@@ -53,13 +52,7 @@ public sealed unsafe class Context : IDisposable
     {
         if (lib == null) throw new ArgumentNullException(nameof(lib));
         if (func == null) throw new ArgumentNullException(nameof(func));
-        fixed (byte* libPtr = Encoding.UTF8.GetBytes(lib + '\0'))
-        {
-            fixed (byte* funcPtr = Encoding.UTF8.GetBytes(func + '\0'))
-            {
-                return new(NativeMethods.f3d_context_get_symbol((sbyte*)libPtr, (sbyte*)funcPtr));
-            }
-        }
+        return new(NativeMethods.f3d_context_get_symbol(lib, func));
     }
 
     /// <summary>

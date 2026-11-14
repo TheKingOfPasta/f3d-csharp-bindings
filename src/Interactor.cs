@@ -179,8 +179,7 @@ public sealed unsafe class Interactor
             throw new AlreadyExistsException($"Command already exists: {action}");
 
         var handle = GCHandle.Alloc(callback);
-        fixed (byte* a = Utf8(action))
-            NativeMethods.f3d_interactor_add_command(_handle, (sbyte*)a, &OnCommand, (void*)GCHandle.ToIntPtr(handle));
+        NativeMethods.f3d_interactor_add_command(_handle, action, &OnCommand, (void*)GCHandle.ToIntPtr(handle));
         _commands[action] = handle;
         return this;
     }
@@ -193,8 +192,7 @@ public sealed unsafe class Interactor
     public Interactor RemoveCommand(string action)
     {
         ArgumentNullException.ThrowIfNull(action);
-        fixed (byte* a = Utf8(action))
-            NativeMethods.f3d_interactor_remove_command(_handle, (sbyte*)a);
+        NativeMethods.f3d_interactor_remove_command(_handle, action);
         if (_commands.Remove(action, out var handle)) handle.Free();
         return this;
     }
@@ -219,8 +217,7 @@ public sealed unsafe class Interactor
     public bool TriggerCommand(string command, bool keepComments = true)
     {
         ArgumentNullException.ThrowIfNull(command);
-        fixed (byte* c = Utf8(command))
-            return NativeMethods.f3d_interactor_trigger_command(_handle, (sbyte*)c, keepComments ? 1 : 0) != 0;
+        return NativeMethods.f3d_interactor_trigger_command(_handle, command, keepComments ? 1 : 0) != 0;
     }
 
     /// <summary>
@@ -310,8 +307,7 @@ public sealed unsafe class Interactor
     {
         ArgumentNullException.ThrowIfNull(group);
         int count = 0;
-        fixed (byte* g = Utf8(group))
-            return ToBindList(NativeMethods.f3d_interactor_get_binds_for_group(_handle, (sbyte*)g, &count), count);
+        return ToBindList(NativeMethods.f3d_interactor_get_binds_for_group(_handle, group, &count), count);
     }
 
     /// <summary>
@@ -428,8 +424,7 @@ public sealed unsafe class Interactor
     public Interactor TriggerKeyboardKey(InputAction action, string keySym)
     {
         ArgumentNullException.ThrowIfNull(keySym);
-        fixed (byte* k = Utf8(keySym))
-            NativeMethods.f3d_interactor_trigger_keyboard_key(_handle, (f3d_interactor_input_action_t)action, (sbyte*)k);
+        NativeMethods.f3d_interactor_trigger_keyboard_key(_handle, (f3d_interactor_input_action_t)action, keySym);
         return this;
     }
 
@@ -496,8 +491,7 @@ public sealed unsafe class Interactor
     public bool PlayInteraction(string file, double deltaTime = 1.0 / 30.0)
     {
         ArgumentNullException.ThrowIfNull(file);
-        fixed (byte* f = Utf8(file))
-            return NativeMethods.f3d_interactor_play_interaction(_handle, (sbyte*)f, deltaTime) != 0;
+        return NativeMethods.f3d_interactor_play_interaction(_handle, file, deltaTime) != 0;
     }
 
     /// <summary>
@@ -508,8 +502,7 @@ public sealed unsafe class Interactor
     public bool RecordInteraction(string file)
     {
         ArgumentNullException.ThrowIfNull(file);
-        fixed (byte* f = Utf8(file))
-            return NativeMethods.f3d_interactor_record_interaction(_handle, (sbyte*)f) != 0;
+        return NativeMethods.f3d_interactor_record_interaction(_handle, file) != 0;
     }
 
     /// <summary>
@@ -562,9 +555,7 @@ public sealed unsafe class Interactor
     public Interactor TriggerNotification(string desc, string value = "", double duration = 3.0)
     {
         ArgumentNullException.ThrowIfNull(desc);
-        fixed (byte* d = Utf8(desc))
-        fixed (byte* v = Utf8(value ?? ""))
-            NativeMethods.f3d_interactor_trigger_notification(_handle, (sbyte*)d, (sbyte*)v, duration);
+        NativeMethods.f3d_interactor_trigger_notification(_handle, desc, value ?? "", duration);
         return this;
     }
 
@@ -582,8 +573,6 @@ public sealed unsafe class Interactor
         if (field.IsAllocated) field.Free();
         field = value;
     }
-
-    static byte[] Utf8(string s) => Encoding.UTF8.GetBytes(s + '\0');
 
     static List<string> ToStringList(sbyte** array, int count)
     {
@@ -608,8 +597,7 @@ public sealed unsafe class Interactor
     // Exceptions are logged as F3D errors
     static void LogError(string where, Exception e)
     {
-        fixed (byte* m = Utf8($"Exception in {where} callback: {e}"))
-            NativeMethods.f3d_log_error((sbyte*)m);
+        NativeMethods.f3d_log_error($"Exception in {where} callback: {e}");
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
