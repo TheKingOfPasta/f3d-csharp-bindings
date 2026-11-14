@@ -11,8 +11,7 @@ public sealed unsafe class Options
 
     public void SetAsBool(string name, bool value)
     {
-        fixed (byte* n = Encoding.UTF8.GetBytes(name + '\0'))
-            NativeMethods.f3d_options_set_as_bool(_handle, (sbyte*)n, value ? 1 : 0);
+        NativeMethods.f3d_options_set_as_bool(_handle, name, value ? 1 : 0);
     }
 
     public static implicit operator f3d_options_t*(Options opt)

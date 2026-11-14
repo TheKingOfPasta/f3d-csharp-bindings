@@ -10,6 +10,7 @@ list(APPEND csharpf3dTests_list
   Interactor
   Options
   Scene
+  Image
   )
 
 foreach(test_name ${csharpf3dTests_list})
