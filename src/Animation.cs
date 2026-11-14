@@ -13,6 +13,11 @@ public sealed unsafe class Animation
 {
     readonly f3d_animation_t* _handle;
 
+    public static implicit operator f3d_animation_t*(Animation a)
+    {
+        return a._handle;
+    }
+
     internal Animation(f3d_animation_t* handle) => _handle = handle;
 
     /// <summary>
