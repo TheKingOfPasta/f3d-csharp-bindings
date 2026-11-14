@@ -75,14 +75,15 @@ public sealed unsafe class Interactor
     {
         public InteractionBind() : this(ModifierKeys.None, "") { }
 
-        public string Format() => Mod switch
+        // Done by the C API, which writes "Cmd+" instead of "Ctrl+" on macOS
+        public string Format()
         {
-            ModifierKeys.CtrlShift => "Ctrl+Shift+" + Inter,
-            ModifierKeys.Ctrl => "Ctrl+" + Inter,
-            ModifierKeys.Shift => "Shift+" + Inter,
-            ModifierKeys.Any => "Any+" + Inter,
-            _ => Inter,
-        };
+            var native = ToNative();
+            const int size = 512;
+            var output = stackalloc sbyte[size];
+            NativeMethods.f3d_interaction_bind_format(&native, output, size);
+            return Marshal.PtrToStringUTF8((nint)output) ?? "";
+        }
 
         public static InteractionBind Parse(string str)
         {
