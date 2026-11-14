@@ -28,5 +28,6 @@ public sealed unsafe class Engine : IDisposable
         if (_handle == null) return;
         NativeMethods.f3d_engine_destroy(_handle);
         _handle = null;
+        Interactor.ReleaseCallbacks(); // F3D can no longer call them
     }
 }
