@@ -88,14 +88,14 @@ static class TestImage
 
     private static void TestSaveAndReloadBuffer()
     {
-        using var original = new Image(32, 32, 3);
+        using var original = new Image(800, 600, 3, ChannelType.BYTE);
         byte[] pngBytes = original.SaveBuffer(SaveFormat.PNG);
 
-        Debug.Assert(pngBytes != null && pngBytes.Length > 0);
+        Debug.Assert(pngBytes.Length > 0);
 
         using var reloaded = new Image(pngBytes);
-        Debug.Assert(reloaded.Width == 32);
-        Debug.Assert(reloaded.Height == 32);
+        Debug.Assert(reloaded.Width == 800);
+        Debug.Assert(reloaded.Height == 600);
         Debug.Assert(original.Compare(reloaded) == 0.0);
     }
 
