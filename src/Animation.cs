@@ -73,7 +73,7 @@ public sealed unsafe class Animation
     /// Get the current animation name, if any.
     /// </summary>
     /// <value>animation names or string error</value>
-    public string? CurrentName => TakeString(NativeMethods.f3d_animation_get_current_name(_handle));
+    public string? CurrentName => NativeUtils.TakeString(NativeMethods.f3d_animation_get_current_name(_handle), "No current name found.");
 
     /// <summary>
     /// Get the animation name of a given animation index, if any.
@@ -81,8 +81,7 @@ public sealed unsafe class Animation
     /// <param name="index">animation index</param>
     /// <returns>animation name or string error</returns>
     public string GetName(int index)
-        => TakeString(NativeMethods.f3d_animation_get_name(_handle, index))
-           ?? throw new F3DException($"No animation at index {index}");
+        => NativeUtils.TakeString(NativeMethods.f3d_animation_get_name(_handle, index), $"No animation at index {index}");
 
     /// <summary>
     /// Get all of the animation names, if any.
@@ -160,19 +159,4 @@ public sealed unsafe class Animation
     /// <value>animation direction</value>
     public AnimationDirection Direction
         => (AnimationDirection)NativeMethods.f3d_animation_get_direction(_handle);
-
-    // Copy string to .NET then free C allocation
-    static string? TakeString(sbyte* str)
-    {
-        if (str == null)
-            return null;
-        try
-        {
-            return Marshal.PtrToStringUTF8((nint)str);
-        }
-        finally
-        {
-            NativeMethods.f3d_animation_destroy_string(str);
-        }
-    }
 }
