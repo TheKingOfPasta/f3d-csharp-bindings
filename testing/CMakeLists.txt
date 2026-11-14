@@ -11,6 +11,7 @@ list(APPEND csharpf3dTests_list
   Options
   Scene
   Image
+  VideoPacket
   )
 
 foreach(test_name ${csharpf3dTests_list})
