@@ -9,6 +9,7 @@ var tests = new Dictionary<string, Action<string[]>>
     ["TestScene"] = TestScene.Run,
     ["TestImage"] = TestImage.Run,
     ["TestVideoPacket"] = TestVideoPacket.Run,
+    ["TestVideoEncoder"] = TestVideoEncoder.Run,
     ["TestUtils"] = TestUtils.Run,
     ["TestTypes"] = TestTypes.Run,
 };

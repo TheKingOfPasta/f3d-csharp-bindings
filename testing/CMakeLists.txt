@@ -12,6 +12,7 @@ list(APPEND csharpf3dTests_list
   Scene
   Image
   VideoPacket
+  VideoEncoder
   Utils
   Types
   )
