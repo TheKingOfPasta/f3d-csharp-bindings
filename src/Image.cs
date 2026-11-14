@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Text;
 using F3D.Native;
 
 namespace F3D;
@@ -52,10 +51,7 @@ public sealed unsafe class Image : IDisposable, IEquatable<Image>
     public Image(string filePath)
     {
         ArgumentNullException.ThrowIfNull(filePath);
-        fixed (byte* pPath = Encoding.UTF8.GetBytes(filePath + '\0'))
-        {
-            _handle = NativeMethods.f3d_image_create_path((sbyte*)pPath);
-        }
+        _handle = NativeMethods.f3d_image_create_path(filePath);
 
         if (_handle == null)
             throw new ReadException($"Could not read image file: '{filePath}'");
@@ -232,12 +228,9 @@ public sealed unsafe class Image : IDisposable, IEquatable<Image>
     public Image Save(string filePath, SaveFormat format)
     {
         ArgumentNullException.ThrowIfNull(filePath);
-        fixed (byte* pPath = Encoding.UTF8.GetBytes(filePath + '\0'))
-        {
-            int res = NativeMethods.f3d_image_save(Handle, (sbyte*)pPath, format);
-            if (res == 0)
-                throw new WriteException($"Failed to save image to '{filePath}'");
-        }
+        int res = NativeMethods.f3d_image_save(Handle, filePath, format);
+        if (res == 0)
+            throw new WriteException($"Failed to save image to '{filePath}'");
         return this;
     }
 
@@ -287,11 +280,9 @@ public sealed unsafe class Image : IDisposable, IEquatable<Image>
     /// <returns>This image for method chaining.</returns>
     public Image SetMetadata(string key, string value)
     {
-        fixed (byte* pKey = Encoding.UTF8.GetBytes(key + '\0'))
-        fixed (byte* pVal = Encoding.UTF8.GetBytes(value + '\0'))
-        {
-            NativeMethods.f3d_image_set_metadata(Handle, (sbyte*)pKey, (sbyte*)pVal);
-        }
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(value);
+        NativeMethods.f3d_image_set_metadata(Handle, key, value);
         return this;
     }
 
@@ -302,14 +293,12 @@ public sealed unsafe class Image : IDisposable, IEquatable<Image>
     /// <returns>Metadata value.</returns>
     public string GetMetadata(string key)
     {
-        fixed (byte* pKey = Encoding.UTF8.GetBytes(key + '\0'))
-        {
-            sbyte* pVal = NativeMethods.f3d_image_get_metadata(Handle, (sbyte*)pKey);
-            if (pVal == null)
-                throw new MetadataException($"Metadata key not found: '{key}'");
+        ArgumentNullException.ThrowIfNull(key);
+        sbyte* pVal = NativeMethods.f3d_image_get_metadata(Handle, key);
+        if (pVal == null)
+            throw new MetadataException($"Metadata key not found: '{key}'");
 
-            return Marshal.PtrToStringUTF8((IntPtr)pVal) ?? string.Empty;
-        }
+        return Marshal.PtrToStringUTF8((IntPtr)pVal) ?? string.Empty;
     }
 
     /// <summary>
