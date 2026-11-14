@@ -14,6 +14,7 @@ list(APPEND csharpf3dTests_list
   Image
   VideoPacket
   VideoEncoder
+  VideoFrame
   Utils
   Types
   Transform2D

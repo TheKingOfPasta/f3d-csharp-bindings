@@ -11,6 +11,7 @@ var tests = new Dictionary<string, Action<string[]>>
     ["TestImage"] = TestImage.Run,
     ["TestVideoPacket"] = TestVideoPacket.Run,
     ["TestVideoEncoder"] = TestVideoEncoder.Run,
+    ["TestVideoFrame"] = TestVideoFrame.Run,
     ["TestUtils"] = TestUtils.Run,
     ["TestTypes"] = TestTypes.Run,
     ["TestTransform2D"] = TestTransform2D.Run,
