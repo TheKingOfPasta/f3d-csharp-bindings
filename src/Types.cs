@@ -36,7 +36,7 @@ public static class Types
     /// <summary>
     /// Describes the state of a light.
     /// </summary>
-    public sealed class LightState : IEquatable<LightState>
+    public sealed unsafe class LightState : IEquatable<LightState>
     {
         public LightType Type { get; set; } = LightType.SceneLight;
         public double[] Position { get; set; } = [0.0, 0.0, 0.0];
@@ -46,6 +46,44 @@ public static class Types
         public double Intensity { get; set; } = 1.0;
         public bool SwitchState { get; set; } = true;
         public bool CastShadows { get; set; } = true;
+
+        public static implicit operator LightState(f3d_light_state_t* ls)
+        {
+            LightState l = new LightState();
+
+            l.Type = (LightType)ls->type;
+            l.Position = [ ls->position[0], ls->position[1], ls->position[2] ];
+            l.Color = [ ls->color.data[0], ls->color.data[1], ls->color.data[2]];
+            l.Direction = [ ls->direction[0], ls->direction[1], ls->direction[2] ];
+            l.PositionalLight = ls->positional_light == 1;
+            l.Intensity = ls->intensity;
+            l.SwitchState = ls->switch_state == 1;
+            l.CastShadows = ls->cast_shadows == 1;
+
+            return l;
+        }
+
+        public static implicit operator f3d_light_state_t*(LightState l)
+        {
+            f3d_light_state_t* ls = (f3d_light_state_t*)NativeMemory.Alloc((nuint)sizeof(f3d_light_state_t));
+
+            ls->type = (f3d_light_type_t)l.Type;
+            ls->position[0] = l.Position[0];
+            ls->position[1] = l.Position[1];
+            ls->position[2] = l.Position[2];
+            ls->color.data[0] = l.Color[0];
+            ls->color.data[1] = l.Color[1];
+            ls->color.data[2] = l.Color[2];
+            ls->direction[0] = l.Direction[0];
+            ls->direction[1] = l.Direction[1];
+            ls->direction[2] = l.Direction[2];
+            ls->positional_light = l.PositionalLight ? 1 : 0;
+            ls->intensity = l.Intensity;
+            ls->switch_state = l.SwitchState ? 1 : 0;
+            ls->cast_shadows = l.CastShadows ? 1 : 0;
+
+            return ls;
+        }
 
         public LightState()
         {
@@ -112,7 +150,7 @@ public static class Types
     /// <summary>
     /// Describes a node in the scene hierarchy.
     /// </summary>
-    public sealed class NodeState
+    public sealed unsafe class NodeState
     {
         public int Id { get; set; } = -1;
         public int ParentId { get; set; } = -1;
@@ -121,18 +159,69 @@ public static class Types
         public bool Visible { get; set; } = true;
         public bool HasChildren { get; set; }
         public bool Collapsed { get; set; }
+
+        public static implicit operator NodeState(f3d_node_state_t* n)
+        {
+            NodeState node = new NodeState();
+
+            node.Id = n->id;
+            node.ParentId = n->parent_id;
+            node.Level = n->level;
+            node.Label = "";
+            for (int i = 0; n->label[i] != 0; i++)
+                node.Label += n->label[i];
+
+            node.Visible = n->visible == 1;
+            node.HasChildren = n->has_children == 1;
+            node.Collapsed = n->collapsed == 1;
+
+            return node;
+        }
+
+        public static implicit operator f3d_node_state_t*(NodeState n)
+        {
+            f3d_node_state_t* ptr = (f3d_node_state_t*)NativeMemory.Alloc(
+                (nuint)sizeof(f3d_node_state_t));
+
+            ptr->id = n.Id;
+            ptr->parent_id = n.ParentId;
+            ptr->level = n.Level;
+
+            ptr->label = (sbyte*)NativeMemory.Alloc((nuint)(sizeof(sbyte) * n.Label.Length));
+            for (int i = 0; i < n.Label.Length; i++)
+                ptr->label[i] = (sbyte)n.Label[i];
+
+            ptr->visible = n.Visible ? 1 : 0;
+            ptr->has_children = n.HasChildren ? 1 : 0;
+            ptr->collapsed = n.Collapsed ? 1 : 0;
+
+            return ptr;
+        }
     }
 
     /// <summary>
     /// Describes the contents of a scene.
     /// NumberOfFiles includes files, meshes, and buffers added to the scene.
     /// </summary>
-    public sealed class SceneInfo
+    public sealed unsafe class SceneInfo
     {
         public int NumberOfFiles { get; set; }
         public int NumberOfActors { get; set; }
         public long NumberOfPoints { get; set; }
         public long NumberOfCells { get; set; }
+
+        public static implicit operator f3d_scene_info_t*(SceneInfo s)
+        {
+            f3d_scene_info_t* ptr = (f3d_scene_info_t*)NativeMemory.Alloc(
+                (nuint)sizeof(f3d_scene_info_t));
+
+            ptr->number_of_files = s.NumberOfFiles;
+            ptr->number_of_actors = s.NumberOfActors;
+            ptr->number_of_points = s.NumberOfPoints;
+            ptr->number_of_cells = s.NumberOfCells;
+
+            return ptr;
+        }
     }
 
     /// <summary>
@@ -145,6 +234,39 @@ public static class Types
         public float[] TextureCoordinates { get; set; } = [];
         public uint[] FaceSides { get; set; } = [];
         public uint[] FaceIndices { get; set; } = [];
+
+        public static implicit operator f3d_mesh_t*(Mesh m)
+        {
+            f3d_mesh_t* ptr = (f3d_mesh_t*)NativeMemory.Alloc(
+                (nuint)sizeof(f3d_mesh_t));
+
+            ptr->points = (float*)NativeMemory.Alloc((nuint)(sizeof(float) * m.Points.Length));
+            for (int i = 0; i < m.Points.Length; i++)
+                ptr->points[i] = m.Points[i];
+            ptr->points_count = (nuint)m.Points.Length;
+
+            ptr->normals = (float*)NativeMemory.Alloc((nuint)(sizeof(float) * m.Normals.Length));
+            for (int i = 0; i < m.Normals.Length; i++)
+                ptr->normals[i] = m.Normals[i];
+            ptr->normals_count = (nuint)m.Normals.Length;
+
+            ptr->texture_coordinates = (float*)NativeMemory.Alloc((nuint)(sizeof(float) * m.TextureCoordinates.Length));
+            for (int i = 0; i < m.TextureCoordinates.Length; i++)
+                ptr->texture_coordinates[i] = m.TextureCoordinates[i];
+            ptr->texture_coordinates_count = (nuint)m.TextureCoordinates.Length;
+
+            ptr->face_sides = (uint*)NativeMemory.Alloc((nuint)(sizeof(uint) * m.FaceSides.Length));
+            for (int i = 0; i < m.FaceSides.Length; i++)
+                ptr->face_sides[i] = m.FaceSides[i];
+            ptr->face_sides_count = (nuint)m.FaceSides.Length;
+
+            ptr->face_indices = (uint*)NativeMemory.Alloc((nuint)(sizeof(uint) * m.FaceIndices.Length));
+            for (int i = 0; i < m.FaceIndices.Length; i++)
+                ptr->face_indices[i] = m.FaceIndices[i];
+            ptr->face_indices_count = (nuint)m.FaceIndices.Length;
+
+            return ptr;
+        }
 
         public Mesh()
         {

@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Text;
 using F3D.Native;
 
 namespace F3D;
@@ -8,7 +7,7 @@ public sealed unsafe class Scene
 {
     readonly f3d_scene_t* _handle;
 
-    public Animation Animation { get; }
+    public Animation Animation { get; set; }
 
     internal Scene(f3d_scene_t* handle)
     {
@@ -20,6 +19,9 @@ public sealed unsafe class Scene
     {
         return s._handle;
     }
+
+    //public Animation GetAnimation() => NativeMethods.f3d_scene_get_animation(this);
+    public Animation GetAnimation() => Animation;
 
     /// <summary>
     /// Adds and loads a file into the scene.
@@ -46,14 +48,33 @@ public sealed unsafe class Scene
         return this;
     }
 
+    private void FreeMesh(f3d_mesh_t* m)
+    {
+        NativeMemory.Free(m->points);
+        NativeMemory.Free(m->normals);
+        NativeMemory.Free(m->texture_coordinates);
+        NativeMemory.Free(m->face_sides);
+        NativeMemory.Free(m->face_indices);
+
+        NativeMemory.Free(m);
+    }
+
     /// <summary>
     /// Add and load a mesh into the scene.
     /// </summary>
     /// <param name="mesh">mesh to add</param>
     /// <returns>this scene for method chaining</returns>
-    public Scene AddMesh(f3d_mesh_t* mesh)
+    public Scene AddMesh(Types.Mesh mesh)
     {
-        if (NativeMethods.f3d_scene_add_mesh(this, mesh) == 0) throw new F3DException("add_mesh function returned 0");
+        f3d_mesh_t* m = mesh;
+
+        if (NativeMethods.f3d_scene_add_mesh(this, mesh) == 0)
+        {
+            FreeMesh(m);
+            throw new F3DException("add_mesh function returned 0");
+        }
+
+        FreeMesh(m);
         return this;
     }
     public Scene AddMeshView(f3d_mesh_view_t* mesh_view)
@@ -80,7 +101,7 @@ public sealed unsafe class Scene
 
     public Scene Add(string[] file_paths, nuint count) => AddMultiple(file_paths, count);
     public Scene Add(string[] file_paths) => AddMultiple(file_paths, (nuint)file_paths.Length);
-    public Scene Add(f3d_mesh_t* mesh) => AddMesh(mesh);
+    public Scene Add(Types.Mesh mesh) => AddMesh(mesh);
     public Scene Add(f3d_mesh_view_t* mesh_view) => AddMeshView(mesh_view);
     public Scene Add(byte[] buffer, nuint size) => AddBuffer(buffer, size);
     public Scene Add(byte[] buffer) => AddBuffer(buffer, (nuint)buffer.Length);
@@ -145,7 +166,7 @@ public sealed unsafe class Scene
     /// </summary>
     /// <param name="light_state">light state to add</param>
     /// <returns>index of the added light</returns>
-    public int AddLight(f3d_light_state_t* light_state) => NativeMethods.f3d_scene_add_light(this, light_state);
+    public int AddLight(Types.LightState light_state) => NativeMethods.f3d_scene_add_light(this, light_state);
 
     /// <summary>
     /// Get the number of lights in the scene.
@@ -158,7 +179,7 @@ public sealed unsafe class Scene
     /// </summary>
     /// <param name="index">index of the light</param>
     /// <returns>light state</returns>
-    public f3d_light_state_t* GetLight(int index) => NativeMethods.f3d_scene_get_light(this, index);
+    public Types.LightState GetLight(int index) => NativeMethods.f3d_scene_get_light(this, index);
 
     /// <summary>
     /// Update a light at provided index with the provided light state.
@@ -166,7 +187,7 @@ public sealed unsafe class Scene
     /// <param name="index">index of the light to update</param>
     /// <param name="light_state">new light state</param>
     /// <returns>this scene for method chaining</returns>
-    public Scene UpdateLight(int index, f3d_light_state_t* light_state)
+    public Scene UpdateLight(int index, Types.LightState light_state)
     {
         if (NativeMethods.f3d_scene_update_light(this, index, light_state) == 0) throw new F3DException("update_light function returned 0");
         return this;
@@ -199,7 +220,7 @@ public sealed unsafe class Scene
     /// </summary>
     /// <param name="count">number of nodes in the returned list</param>
     /// <returns>the list of scene hierarchy nodes</returns>
-    public f3d_node_state_t* GetSceneHierarchy(out uint count)
+    public Types.NodeState GetSceneHierarchy(out uint count)
     {
         uint c = 0;
         var res = NativeMethods.f3d_scene_get_scene_hierarchy(this, &c);
@@ -207,7 +228,7 @@ public sealed unsafe class Scene
 
         return res;
     }
-    public static void DestroySceneHierarchy(f3d_node_state_t* nodes, uint count) => NativeMethods.f3d_scene_destroy_scene_hierarchy(nodes, count);
+    public static void DestroySceneHierarchy(Types.NodeState nodes, uint count) => NativeMethods.f3d_scene_destroy_scene_hierarchy(nodes, count);
 
     /// <summary>
     /// Set the visibility of a scene hierarchy node and of all the nodes in its subtree.
@@ -227,7 +248,16 @@ public sealed unsafe class Scene
     /// </summary>
     /// <param name="info">pointer to the scene information structure</param>
     /// <returns>0 on success, non-zero on failure</returns>
-    public int GetSceneInfo(f3d_scene_info_t* info) => NativeMethods.f3d_scene_get_scene_info(this, info);
+    public int GetSceneInfo(Types.SceneInfo info)
+    {
+        f3d_scene_info_t* s = info;
+
+        int res = NativeMethods.f3d_scene_get_scene_info(this, s);
+
+        NativeMemory.Free(s);
+
+        return res;
+    }
 
     /// <summary>
     /// Check if a file path is supported by the scene.
@@ -253,10 +283,4 @@ public sealed unsafe class Scene
     }
     public int Supports(byte[] buffer, nuint size) => SupportsBuffer(buffer, size);
     public int Supports(byte[] buffer) => SupportsBuffer(buffer, (nuint)buffer.Length);
-
-    /// <summary>
-    /// Get the animation
-    /// </summary>
-    /// <returns>Animation instance</returns>
-    public f3d_animation_t* GetAnimation() => NativeMethods.f3d_scene_get_animation(this);
 }
