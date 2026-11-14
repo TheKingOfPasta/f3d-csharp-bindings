@@ -12,3 +12,6 @@ obj/
 .vscode/
 .idea/
 *.user
+
+# assets
+/assets
