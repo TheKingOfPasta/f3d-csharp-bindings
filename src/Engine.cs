@@ -120,7 +120,7 @@ public sealed unsafe class Engine : IDisposable
     /// Set options for this engine
     /// </summary>
     /// <param name="options">the options to set</param>
-    public void SetOptions(Options opt) => NativeMethods.f3d_engine_get_options(this);
+    public void SetOptions(Options opt) => NativeMethods.f3d_engine_set_options(this, opt.Handle);
     public string DumpToString()
     {
         sbyte* resBytes = NativeMethods.f3d_engine_dump_to_string(this);

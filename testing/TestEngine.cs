@@ -1,6 +1,8 @@
+using System.Runtime.InteropServices;
 using F3D;
+using F3D.Native;
 
-static class TestEngine
+static unsafe class TestEngine
 {
     public static void Run(string[] args)
     {
@@ -13,6 +15,8 @@ static class TestEngine
         {
             TestEngineAccessAndCachePath(temporaryDirectory);
             TestPluginsAndReaderOptions();
+            TestNativeInformation();
+            TestCreateNone();
             TestStateFileRoundTrip(temporaryDirectory);
         }
         finally
@@ -24,8 +28,8 @@ static class TestEngine
     private static void TestEngineAccessAndCachePath(string temporaryDirectory)
     {
         using var engine = Engine.Create(true);
-        if (engine.Options is null || engine.Scene is null || engine.Interactor is null)
-            throw new Exception("Engine should give access to options, scene and interactor.");
+        if (engine.Options is null || engine.Scene is null || engine.Interactor is null || engine.Window is null)
+            throw new Exception("Engine should give access to options, scene, window and interactor.");
 
         string cachePath = Path.Combine(temporaryDirectory, "cache");
         if (engine.SetCachePath(cachePath) != 1)
@@ -34,10 +38,11 @@ static class TestEngine
         if (actualCachePath != cachePath)
             throw new Exception($"GetCachePath returned '{actualCachePath}' instead of '{cachePath}'.");
 
-        engine.Options.SetAsBool("ui.scalar_bar", true);
-        engine.SetOptions(engine.Options);
+        using var options = new Options();
+        options.SetAsBool("ui.scalar_bar", true);
+        engine.SetOptions(options);
         if (!engine.Options.GetAsBool("ui.scalar_bar"))
-            throw new Exception("Setting the engine options should preserve option values.");
+            throw new Exception("SetOptions should copy option values into the engine.");
     }
 
     private static void TestPluginsAndReaderOptions()
@@ -54,6 +59,45 @@ static class TestEngine
         Engine.SetReaderOption("QuakeMDL.skin_index", "0");
 
         _ = Engine.GetAllReaderOptionNames();
+    }
+
+    private static void TestNativeInformation()
+    {
+        int backendCount = 0;
+        f3d_backend_info_t* backends = NativeMethods.f3d_engine_get_rendering_backend_list(&backendCount);
+        if (backends != null)
+            NativeMethods.f3d_engine_destroy_backend_list(backends);
+
+        f3d_lib_info_t* libInfo = NativeMethods.f3d_engine_get_lib_info();
+        if (libInfo == null)
+            throw new Exception("GetLibInfo should return library information.");
+
+        try
+        {
+            if (libInfo->version == null || libInfo->vtk_version == null)
+                throw new Exception("Library information should include version and VTK version.");
+        }
+        finally
+        {
+            NativeMethods.f3d_engine_destroy_lib_info(libInfo);
+        }
+
+        int readerCount = 0;
+        f3d_reader_info_t* readers = NativeMethods.f3d_engine_get_readers_info(&readerCount);
+        if (readers == null || readerCount == 0)
+        {
+            if (readers != null)
+                NativeMethods.f3d_engine_destroy_readers_info(readers);
+            throw new Exception("GetReadersInfo should return at least one reader.");
+        }
+        NativeMethods.f3d_engine_destroy_readers_info(readers);
+    }
+
+    private static void TestCreateNone()
+    {
+        f3d_engine_t* engine = NativeMethods.f3d_engine_create_none();
+        if (engine != null)
+            NativeMethods.f3d_engine_destroy(engine);
     }
 
     private static void TestStateFileRoundTrip(string temporaryDirectory)
@@ -82,8 +126,7 @@ static class TestEngine
                 throw new Exception("Loading a valid state string should succeed.");
             if (!restoredFromString.Options.GetAsBool("ui.scalar_bar"))
                 throw new Exception("Options should be restored from the state string.");
-            if (!restoredFromString.DumpToString().Contains(Path.GetFileName(meshPath), StringComparison.Ordinal))
-                throw new Exception("Scene should be restored from the state string.");
+            CheckRestoredSceneFile(restoredFromString, meshPath, "state string");
         }
 
         if (engine.DumpToFile(stateFilePath) != 1)
@@ -95,13 +138,35 @@ static class TestEngine
                 throw new Exception("Loading a valid state file should succeed.");
             if (!restoredFromFile.Options.GetAsBool("ui.scalar_bar"))
                 throw new Exception("Options should be restored from the state file.");
-            if (!restoredFromFile.DumpToString().Contains(Path.GetFileName(meshPath), StringComparison.Ordinal))
-                throw new Exception("Scene should be restored from the state file.");
+            CheckRestoredSceneFile(restoredFromFile, meshPath, "state file");
         }
 
         if (engine.LoadFromFile(Path.Combine(temporaryDirectory, "missing-state.json")) != 0)
             throw new Exception("Loading a missing state file should fail.");
         if (engine.LoadFromString("{ not valid json") != 0)
             throw new Exception("Loading invalid state content should fail.");
+    }
+
+    private static void CheckRestoredSceneFile(Engine engine, string meshPath, string source)
+    {
+        uint count = 0;
+        sbyte** files = NativeMethods.f3d_scene_get_added_files(engine.Scene, &count);
+        if (files == null || count != 1)
+        {
+            if (files != null)
+                NativeMethods.f3d_scene_destroy_added_files(files, count);
+            throw new Exception($"Scene should contain one restored file from the {source}.");
+        }
+
+        try
+        {
+            string? restoredPath = Marshal.PtrToStringUTF8((IntPtr)files[0]);
+            if (restoredPath is null || !restoredPath.Contains(Path.GetFileName(meshPath), StringComparison.Ordinal))
+                throw new Exception($"Scene file was not restored from the {source}.");
+        }
+        finally
+        {
+            NativeMethods.f3d_scene_destroy_added_files(files, count);
+        }
     }
 }
