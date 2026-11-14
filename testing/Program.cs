@@ -15,6 +15,7 @@ var tests = new Dictionary<string, Action<string[]>>
     ["TestTypes"] = TestTypes.Run,
     ["TestAnimation"] = TestAnimation.Run,
     ["TestCamera"] = TestCamera.Run,
+    ["TestLog"] = TestLog.Run,
 };
 
 if (args.Length < 1 || !tests.TryGetValue(args[0], out var test))

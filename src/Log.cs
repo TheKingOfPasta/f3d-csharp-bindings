@@ -33,7 +33,7 @@ public static unsafe class Log
 
 
     /// <summary>
-    /// Convert a .NET string to a null-terminated UTF-8 buffer and pass it to a native function.
+    /// Reject null messages, then call the native log function
     /// </summary>
     /// <param name="message">message string</param>
     /// <param name="nativeLog">native log function</param>

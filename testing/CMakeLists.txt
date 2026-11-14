@@ -18,6 +18,7 @@ list(APPEND csharpf3dTests_list
   Types
   Animation
   Camera
+  Log
   )
 
 foreach(test_name ${csharpf3dTests_list})
