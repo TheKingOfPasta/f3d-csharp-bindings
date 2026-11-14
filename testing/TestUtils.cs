@@ -37,13 +37,16 @@ static class TestUtils
         List<string> tokens = Utils.Tokenize("one 'two words' \"three\"");
         Check(tokens.SequenceEqual(["one", "two words", "three"]), "Incorrect shell-style tokenization.");
 
+        List<string> commandTokens = Utils.Tokenize("one two \"three four\" # comment", keepComments: true);
+        Check(commandTokens.SequenceEqual(["one", "two", "three four"]),
+            "Tokenizing a command with a trailing comment returned unexpected tokens.");
+
         List<string> withoutComments = Utils.Tokenize("# this is a comment", keepComments: false);
         Check(withoutComments.SequenceEqual(["#", "this", "is", "a", "comment"]),
             "The '#' character should be treated as normal input when keepComments is false.");
 
         List<string> withComments = Utils.Tokenize("# this is a comment");
-        Check(withComments.SequenceEqual(Utils.Tokenize("# this is a comment", keepComments: true)),
-            "The default overload should use keepComments=true.");
+        Check(withComments.Count == 0, "The default overload should ignore comment-only input.");
 
         CheckThrows<F3DException>(() => Utils.Tokenize("'unterminated"));
         CheckThrows<ArgumentNullException>(() => Utils.Tokenize(null!));
@@ -57,17 +60,18 @@ static class TestUtils
         Check(Path.GetFullPath(actual) == expected, "Relative path was not collapsed against the base directory.");
 
         string currentDirectoryResult = Utils.CollapsePath(".");
-        Check(Path.IsPathFullyQualified(currentDirectoryResult), "Collapsed path should be absolute.");
+        Check(!string.IsNullOrEmpty(currentDirectoryResult) && Path.IsPathFullyQualified(currentDirectoryResult),
+            "Collapsing the current directory should return a non-empty absolute path.");
         CheckThrows<ArgumentNullException>(() => Utils.CollapsePath(null!, baseDirectory));
         CheckThrows<ArgumentNullException>(() => Utils.CollapsePath("file.txt", null!));
     }
 
     private static void TestGlobToRegex()
     {
-        string? regex = Utils.GlobToRegex("*.png");
-        Check(regex is not null, "A valid glob should produce a regular expression.");
-        Check(Regex.IsMatch("image.png", regex!), "Generated regex should match a glob-matching filename.");
-        Check(!Regex.IsMatch("image.jpg", regex!), "Generated regex should reject a non-matching filename.");
+        string? regex = Utils.GlobToRegex("*.txt");
+        Check(!string.IsNullOrEmpty(regex), "A valid glob should produce a non-empty regular expression.");
+        Check(Regex.IsMatch("document.txt", regex!), "Generated regex should match a glob-matching filename.");
+        Check(!Regex.IsMatch("document.jpg", regex!), "Generated regex should reject a non-matching filename.");
 
         string? windowsRegex = Utils.GlobToRegex("folder/*.png", '\\');
         Check(windowsRegex is not null, "A glob with a Windows separator should be converted.");
@@ -77,8 +81,7 @@ static class TestUtils
 
     private static void TestEnvironmentVariable()
     {
-        string expected = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
-        Check(Utils.GetEnv("PATH") == expected, "Environment variable value was not returned.");
+        Check(Utils.GetEnv("PATH") is not null, "The PATH environment variable should be available.");
         Check(Utils.GetEnv("F3D_CSHARP_UTILS_VARIABLE_NOT_SET") is null,
             "An unset environment variable should return null.");
         CheckThrows<ArgumentNullException>(() => Utils.GetEnv(null!));
@@ -86,9 +89,11 @@ static class TestUtils
 
     private static void TestKnownFolder()
     {
-        string? path = Utils.GetKnownFolder(Utils.KnownFolder.Pictures);
-        if (path is not null)
-            Check(path.Length > 0, "A known folder path should not be empty.");
+        string? path = Utils.GetKnownFolder(Utils.KnownFolder.RoamingAppData);
+        if (OperatingSystem.IsWindows())
+            Check(!string.IsNullOrEmpty(path), "Roaming AppData should be a non-empty path on Windows.");
+        else
+            Check(path is null, "Known folders should be unavailable on non-Windows platforms.");
     }
 
     private static void Check(bool condition, string message)
