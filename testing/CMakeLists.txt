@@ -6,6 +6,7 @@ set(F3D_CSHARP_TESTING_DATA_DIR "" CACHE PATH "F3D testing folder (testing/ in t
 set(tests_dll ${CMAKE_CURRENT_SOURCE_DIR}/bin/Debug/net8.0/Tests.dll)
 
 list(APPEND csharpf3dTests_list
+  Context
   Engine
   Interactor
   Options

@@ -3,6 +3,7 @@
 
 var tests = new Dictionary<string, Action<string[]>>
 {
+    ["TestContext"] = TestContext.Run,
     ["TestEngine"] = TestEngine.Run,
     ["TestInteractor"] = TestInteractor.Run,
     ["TestOptions"] = TestOptions.Run,
