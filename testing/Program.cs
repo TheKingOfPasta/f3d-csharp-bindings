@@ -13,6 +13,7 @@ var tests = new Dictionary<string, Action<string[]>>
     ["TestVideoEncoder"] = TestVideoEncoder.Run,
     ["TestUtils"] = TestUtils.Run,
     ["TestTypes"] = TestTypes.Run,
+    ["TestAnimation"] = TestAnimation.Run,
 };
 
 if (args.Length < 1 || !tests.TryGetValue(args[0], out var test))

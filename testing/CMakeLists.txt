@@ -16,6 +16,7 @@ list(APPEND csharpf3dTests_list
   VideoEncoder
   Utils
   Types
+  Animation
   )
 
 foreach(test_name ${csharpf3dTests_list})
