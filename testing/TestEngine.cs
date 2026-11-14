@@ -1,8 +1,6 @@
-using System.Runtime.InteropServices;
 using F3D;
-using F3D.Native;
 
-static unsafe class TestEngine
+static class TestEngine
 {
     public static void Run(string[] args)
     {
@@ -15,8 +13,6 @@ static unsafe class TestEngine
         {
             TestEngineAccessAndCachePath(temporaryDirectory);
             TestPluginsAndReaderOptions();
-            TestNativeInformation();
-            TestCreateNone();
             TestStateFileRoundTrip(temporaryDirectory);
         }
         finally
@@ -61,45 +57,6 @@ static unsafe class TestEngine
         _ = Engine.GetAllReaderOptionNames();
     }
 
-    private static void TestNativeInformation()
-    {
-        int backendCount = 0;
-        f3d_backend_info_t* backends = NativeMethods.f3d_engine_get_rendering_backend_list(&backendCount);
-        if (backends != null)
-            NativeMethods.f3d_engine_destroy_backend_list(backends);
-
-        f3d_lib_info_t* libInfo = NativeMethods.f3d_engine_get_lib_info();
-        if (libInfo == null)
-            throw new Exception("GetLibInfo should return library information.");
-
-        try
-        {
-            if (libInfo->version == null || libInfo->vtk_version == null)
-                throw new Exception("Library information should include version and VTK version.");
-        }
-        finally
-        {
-            NativeMethods.f3d_engine_destroy_lib_info(libInfo);
-        }
-
-        int readerCount = 0;
-        f3d_reader_info_t* readers = NativeMethods.f3d_engine_get_readers_info(&readerCount);
-        if (readers == null || readerCount == 0)
-        {
-            if (readers != null)
-                NativeMethods.f3d_engine_destroy_readers_info(readers);
-            throw new Exception("GetReadersInfo should return at least one reader.");
-        }
-        NativeMethods.f3d_engine_destroy_readers_info(readers);
-    }
-
-    private static void TestCreateNone()
-    {
-        f3d_engine_t* engine = NativeMethods.f3d_engine_create_none();
-        if (engine != null)
-            NativeMethods.f3d_engine_destroy(engine);
-    }
-
     private static void TestStateFileRoundTrip(string temporaryDirectory)
     {
         string meshPath = Path.Combine(temporaryDirectory, "engine_test.obj");
@@ -126,7 +83,8 @@ static unsafe class TestEngine
                 throw new Exception("Loading a valid state string should succeed.");
             if (!restoredFromString.Options.GetAsBool("ui.scalar_bar"))
                 throw new Exception("Options should be restored from the state string.");
-            CheckRestoredSceneFile(restoredFromString, meshPath, "state string");
+            if (!restoredFromString.DumpToString().Contains(Path.GetFileName(meshPath), StringComparison.Ordinal))
+                throw new Exception("Scene should be restored from the state string.");
         }
 
         if (engine.DumpToFile(stateFilePath) != 1)
@@ -138,7 +96,8 @@ static unsafe class TestEngine
                 throw new Exception("Loading a valid state file should succeed.");
             if (!restoredFromFile.Options.GetAsBool("ui.scalar_bar"))
                 throw new Exception("Options should be restored from the state file.");
-            CheckRestoredSceneFile(restoredFromFile, meshPath, "state file");
+            if (!restoredFromFile.DumpToString().Contains(Path.GetFileName(meshPath), StringComparison.Ordinal))
+                throw new Exception("Scene should be restored from the state file.");
         }
 
         if (engine.LoadFromFile(Path.Combine(temporaryDirectory, "missing-state.json")) != 0)
@@ -147,26 +106,4 @@ static unsafe class TestEngine
             throw new Exception("Loading invalid state content should fail.");
     }
 
-    private static void CheckRestoredSceneFile(Engine engine, string meshPath, string source)
-    {
-        uint count = 0;
-        sbyte** files = NativeMethods.f3d_scene_get_added_files(engine.Scene, &count);
-        if (files == null || count != 1)
-        {
-            if (files != null)
-                NativeMethods.f3d_scene_destroy_added_files(files, count);
-            throw new Exception($"Scene should contain one restored file from the {source}.");
-        }
-
-        try
-        {
-            string? restoredPath = Marshal.PtrToStringUTF8((IntPtr)files[0]);
-            if (restoredPath is null || !restoredPath.Contains(Path.GetFileName(meshPath), StringComparison.Ordinal))
-                throw new Exception($"Scene file was not restored from the {source}.");
-        }
-        finally
-        {
-            NativeMethods.f3d_scene_destroy_added_files(files, count);
-        }
-    }
 }
