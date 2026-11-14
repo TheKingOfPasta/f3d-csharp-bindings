@@ -31,4 +31,9 @@ public sealed unsafe class Scene
         }
         return this;
     }
+
+    public static implicit operator f3d_scene_t*(Scene s)
+    {
+        return s._handle;
+    }
 }

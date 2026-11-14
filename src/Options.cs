@@ -502,4 +502,10 @@ public sealed unsafe class Options : IDisposable
         if (names != null) NativeMethods.f3d_options_destroy_names(names, count);
         return list;
     }
+
+    public static implicit operator f3d_options_t*(Options opt)
+    {
+        return opt._handle;
+    }
+
 }
